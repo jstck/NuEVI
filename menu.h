@@ -17,6 +17,7 @@
 
 
 void menu();
+void drawSensorPixels();
 
 
 
