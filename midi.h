@@ -1,6 +1,7 @@
 #ifndef _MIDI_H
 #define _MIDI_H
 
+void setupMidi();
 void setMidiChannel(byte channel);
 byte getMidiChannel();
 void midiSendNoteOn(byte note, int velocity);

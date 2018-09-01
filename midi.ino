@@ -4,6 +4,11 @@
 #define MIDI_CHANNEL 1
 #endif
 
+void setupMidi() {
+  Serial3.begin(31250);   // start serial with midi baudrate 31250
+  Serial3.flush();
+}
+
 //Separate MIDI channels for USB and serial. Serial is 0-based, one less than everything else.
 byte activeMIDIchannel=MIDI_CHANNEL;
 byte serialMIDIchannel=MIDI_CHANNEL-1;

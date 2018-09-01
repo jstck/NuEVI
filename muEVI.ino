@@ -747,9 +747,8 @@ void setup() {
     activePatch=0;                
     doPatchUpdate=1;
   }
-  
-  Serial3.begin(31250);   // start serial with midi baudrate 31250
-  Serial3.flush();
+
+  setupMidi();
 
   digitalWrite(13,HIGH); // Switch on the onboard LED to indicate power on/ready
   
