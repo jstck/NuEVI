@@ -6,8 +6,8 @@
 #include <Adafruit_SSD1306.h>
 
 
-#if (SSD1306_LCDHEIGHT != 64)
-#error("Height incorrect, please fix Adafruit_SSD1306.h!");
+#ifndef SSD1306_128_64
+#error("Display type incorrect, please change Adafruit_SSD1306.h to use SSD1306_128_64 (128x64) display.");
 #endif
 
 
