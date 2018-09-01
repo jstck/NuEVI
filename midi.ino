@@ -53,11 +53,11 @@ void midiSendPitchBend(int pbValue) {
 
   //Split 14-bit pitch bend value into two 7-bit values
   byte pitchLSB = pbValue & 0x007F;
-  byte pitchMSB = (pbValue >>7) & 0x007F; 
+  byte pitchMSB = (pbValue >>7) & 0x007F;
   midiSend3B((0xE0 | serialMIDIchannel), pitchLSB, pitchMSB);
 }
 
-//  Send din aftertouch 
+//  Send din aftertouch
 void midiSendAfterTouch(byte value) {
   usbMIDI.sendAfterTouch(value, activeMIDIchannel);
   midiSend2B((0xD0 | serialMIDIchannel), value);
@@ -74,16 +74,15 @@ void midiReset() {
   midiSendControlChange(11, 127);
 }
 
-//  Send a three byte serial midi message  
+//  Send a three byte serial midi message
 void midiSend3B(byte midistatus, byte data1, byte data2) {
   Serial3.write(midistatus);
   Serial3.write(data1);
   Serial3.write(data2);
 }
 
-//  Send a two byte serial midi message  
+//  Send a two byte serial midi message
 void midiSend2B(byte midistatus, byte data) {
   Serial3.write(midistatus);
   Serial3.write(data);
 }
-

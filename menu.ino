@@ -32,7 +32,7 @@ void menu() {
       buttonPressedAndNotUsed = 1;
       buttonRepeatTime = millis();
     }
-    
+
   }
 
 
@@ -63,7 +63,7 @@ void menu() {
   }
 
 
-  
+
   if        (state == DISPLAYOFF_IDL){
     if (stateFirstRun) {
       display.ssd1306_command(SSD1306_DISPLAYOFF);
@@ -113,7 +113,7 @@ void menu() {
         case 8:
           // menu
           if (pinkyKey && (exSensor >= ((extracThrVal+extracMaxVal)/2))){ // switch breath activated legacy settings on/off
-            legacyBrAct = !legacyBrAct;   
+            legacyBrAct = !legacyBrAct;
             dipSwBits = dipSwBits ^ (1<<2);
             writeSetting(DIPSW_BITS_ADDR,dipSwBits);
             digitalWrite(13,LOW);
@@ -123,7 +123,7 @@ void menu() {
             digitalWrite(13,LOW);
             delay(150);
             digitalWrite(13,HIGH);
-          } else if ((exSensor >= ((extracThrVal+extracMaxVal)/2))){ // switch pb pad activated legacy settings control on/off     
+          } else if ((exSensor >= ((extracThrVal+extracMaxVal)/2))){ // switch pb pad activated legacy settings control on/off
             legacy = !legacy;
             dipSwBits = dipSwBits ^ (1<<1);
             writeSetting(DIPSW_BITS_ADDR,dipSwBits);
@@ -149,7 +149,7 @@ void menu() {
           _reboot_Teensyduino_();
       }
     }
-  } else if (state == PATCH_VIEW){ 
+  } else if (state == PATCH_VIEW){
     if (stateFirstRun) {
       drawPatchView();
       patchViewTime = millis();
@@ -160,7 +160,7 @@ void menu() {
       stateFirstRun = 1;
       doPatchUpdate = 1;
       FPD = 0;
-      if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch); 
+      if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch);
     }
     if (buttonPressedAndNotUsed){
       buttonPressedAndNotUsed = 0;
@@ -173,7 +173,7 @@ void menu() {
             activePatch = 0;
             doPatchUpdate = 1;
             FPD = 1;
-            if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch); 
+            if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch);
           } else if (!trills){
             if (patch > 1){
               patch--;
@@ -203,7 +203,7 @@ void menu() {
             activePatch = 0;
             doPatchUpdate = 1;
             FPD = 1;
-            if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch); 
+            if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch);
           } else if (!trills){
             if (patch < 128){
               patch++;
@@ -222,7 +222,7 @@ void menu() {
             stateFirstRun = 1;
             doPatchUpdate = 1;
           }
-          if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch); 
+          if (readSetting(PATCH_ADDR) != patch) writeSetting(PATCH_ADDR,patch);
           FPD = 0;
           break;
         case 10:
@@ -250,7 +250,7 @@ void menu() {
     }
     if (subTranspose){
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotTranspose(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -297,10 +297,10 @@ void menu() {
             if (readSetting(TRANSP_ADDR) != transpose) writeSetting(TRANSP_ADDR,transpose);
             break;
         }
-      }  
+      }
     } else if (subOctave){
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotOctave(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -347,10 +347,10 @@ void menu() {
             if (readSetting(OCTAVE_ADDR) != octave) writeSetting(OCTAVE_ADDR,octave);
             break;
         }
-      } 
+      }
     } else if (subMIDI) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotMIDI(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -397,10 +397,10 @@ void menu() {
             if (readSetting(MIDI_ADDR) != MIDIchannel) writeSetting(MIDI_ADDR,MIDIchannel);
             break;
         }
-      } 
+      }
     } else {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         drawMenuCursor(mainMenuCursor, cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -458,7 +458,7 @@ void menu() {
               state = PATCH_VIEW;
               stateFirstRun = 1;
               clearFPS(trills);
-              
+
             }
             break;
         }
@@ -471,7 +471,7 @@ void menu() {
     }
     if (subParallel){
       if (((millis() - cursorBlinkTime) > cursorBlinkInterval) || forceRedraw) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         if (forceRedraw){
           forceRedraw = 0;
           cursorNow = WHITE;
@@ -522,10 +522,10 @@ void menu() {
             if (readSetting(PARAL_ADDR) != (parallel + 24)) writeSetting(PARAL_ADDR,(parallel + 24));
             break;
         }
-      }  
+      }
     } else if (subRotator){
       if (((millis() - cursorBlinkTime) > cursorBlinkInterval) || forceRedraw) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         if (forceRedraw){
           forceRedraw = 0;
           cursorNow = WHITE;
@@ -579,7 +579,7 @@ void menu() {
       }
     } else if (subPriority){
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotPriority(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -622,10 +622,10 @@ void menu() {
             if (readSetting(PRIO_ADDR) != priority) writeSetting(PRIO_ADDR,priority);
             break;
         }
-      }        
+      }
     } else {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         drawMenuCursor(rotatorMenuCursor, cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -683,13 +683,13 @@ void menu() {
               state = PATCH_VIEW;
               stateFirstRun = 1;
               clearFPS(trills);
-              
+
             }
             break;
         }
       }
     }
-  // end rotator menu  
+  // end rotator menu
   } else if (state == BREATH_ADJ_IDL){
     if (stateFirstRun) {
       drawBreathScreen();
@@ -697,7 +697,7 @@ void menu() {
       stateFirstRun = 0;
     }
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       drawAdjCursor(cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -734,7 +734,7 @@ void menu() {
     }
   } else if (state == BREATH_ADJ_THR){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos1,20,pos1,26,cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -782,7 +782,7 @@ void menu() {
     }
   } else if (state == BREATH_ADJ_MAX){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos2,50,pos2,57,cursorNow);;
       display.display();
       cursorBlinkTime = millis();
@@ -835,7 +835,7 @@ void menu() {
       stateFirstRun = 0;
     }
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       drawAdjCursor(cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -847,8 +847,8 @@ void menu() {
           // down
           state = PITCHB_ADJ_IDL;
           stateFirstRun = 1;
-          if (readSetting(PORTAM_THR_ADDR) != portamThrVal) writeSetting(PORTAM_THR_ADDR,portamThrVal);  
-          if (readSetting(PORTAM_MAX_ADDR) != portamMaxVal) writeSetting(PORTAM_MAX_ADDR,portamMaxVal); 
+          if (readSetting(PORTAM_THR_ADDR) != portamThrVal) writeSetting(PORTAM_THR_ADDR,portamThrVal);
+          if (readSetting(PORTAM_MAX_ADDR) != portamMaxVal) writeSetting(PORTAM_MAX_ADDR,portamMaxVal);
           break;
         case 2:
           // enter
@@ -858,21 +858,21 @@ void menu() {
           // up
           state = BREATH_ADJ_IDL;
           stateFirstRun = 1;
-          if (readSetting(PORTAM_THR_ADDR) != portamThrVal) writeSetting(PORTAM_THR_ADDR,portamThrVal);  
+          if (readSetting(PORTAM_THR_ADDR) != portamThrVal) writeSetting(PORTAM_THR_ADDR,portamThrVal);
           if (readSetting(PORTAM_MAX_ADDR) != portamMaxVal) writeSetting(PORTAM_MAX_ADDR,portamMaxVal);
           break;
         case 8:
           // menu
           state = MAIN_MENU;
           stateFirstRun = 1;
-          if (readSetting(PORTAM_THR_ADDR) != portamThrVal) writeSetting(PORTAM_THR_ADDR,portamThrVal);  
+          if (readSetting(PORTAM_THR_ADDR) != portamThrVal) writeSetting(PORTAM_THR_ADDR,portamThrVal);
           if (readSetting(PORTAM_MAX_ADDR) != portamMaxVal) writeSetting(PORTAM_MAX_ADDR,portamMaxVal);
           break;
       }
     }
   } else if (state == PORTAM_ADJ_THR){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos1,20,pos1,26,cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -920,7 +920,7 @@ void menu() {
     }
   } else if (state == PORTAM_ADJ_MAX){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos2,50,pos2,57,cursorNow);;
       display.display();
       cursorBlinkTime = millis();
@@ -973,7 +973,7 @@ void menu() {
       stateFirstRun = 0;
     }
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       drawAdjCursor(cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -1010,7 +1010,7 @@ void menu() {
     }
   } else if (state == PITCHB_ADJ_THR){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos1,20,pos1,26,cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -1058,7 +1058,7 @@ void menu() {
     }
   } else if (state == PITCHB_ADJ_MAX){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos2,50,pos2,57,cursorNow);;
       display.display();
       cursorBlinkTime = millis();
@@ -1112,7 +1112,7 @@ void menu() {
       stateFirstRun = 0;
     }
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       drawAdjCursor(cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -1149,7 +1149,7 @@ void menu() {
     }
   } else if (state == EXTRAC_ADJ_THR){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos1,20,pos1,26,cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -1197,7 +1197,7 @@ void menu() {
     }
   } else if (state == EXTRAC_ADJ_MAX){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos2,50,pos2,57,cursorNow);;
       display.display();
       cursorBlinkTime = millis();
@@ -1251,7 +1251,7 @@ void menu() {
       stateFirstRun = 0;
     }
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       drawAdjCursor(cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -1285,7 +1285,7 @@ void menu() {
     }
   } else if (state == CTOUCH_ADJ_THR){
     if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+      if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
       display.drawLine(pos1,20,pos1,26,cursorNow);
       display.display();
       cursorBlinkTime = millis();
@@ -1333,8 +1333,8 @@ void menu() {
           break;
       }
     }
-  
-    
+
+
   } else if (state == SETUP_BR_MENU) {  // SETUP BREATH MENU HERE <<<<<<<<<<<<<<
     if (stateFirstRun) {
       drawSetupBrMenuScreen();
@@ -1342,7 +1342,7 @@ void menu() {
     }
     if (subBreathCC){
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotBreathCC(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1409,10 +1409,10 @@ void menu() {
             }
             break;
         }
-      }  
+      }
     } else if (subBreathAT) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotBreathAT(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1461,10 +1461,10 @@ void menu() {
             }
             break;
         }
-      } 
+      }
     } else if (subVelocity) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVelocity(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1511,12 +1511,12 @@ void menu() {
             if (readSetting(VELOCITY_ADDR) != velocity) writeSetting(VELOCITY_ADDR,velocity);
             break;
         }
-      }   
+      }
 
- 
+
     } else if (subCurve) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotCurve(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1563,11 +1563,11 @@ void menu() {
             if (readSetting(BREATHCURVE_ADDR) != curve) writeSetting(BREATHCURVE_ADDR,curve);
             break;
         }
-      }   
+      }
 
     } else if (subVelSmpDl) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVelSmpDl(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1614,11 +1614,11 @@ void menu() {
             if (readSetting(VEL_SMP_DL_ADDR) != velSmpDl) writeSetting(VEL_SMP_DL_ADDR,velSmpDl);
             break;
         }
-      }   
+      }
 
      } else if (subVelBias) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVelBias(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1665,11 +1665,11 @@ void menu() {
             if (readSetting(VEL_BIAS_ADDR) != velBias) writeSetting(VEL_BIAS_ADDR,velBias);
             break;
         }
-      }   
-      
+      }
+
     } else {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         drawMenuCursor(setupBrMenuCursor, cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1710,9 +1710,9 @@ void menu() {
             break;
         }
       }
-    } 
+    }
 
-    
+
   } else if (state == SETUP_CT_MENU) {  // SETUP CONTROLLERS MENU HERE <<<<<<<<<<<<<
    if (stateFirstRun) {
       drawSetupCtMenuScreen();
@@ -1720,7 +1720,7 @@ void menu() {
     }
     if (subPort){
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotPort(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1732,7 +1732,7 @@ void menu() {
             // down
             plotPort(BLACK);
             if (portamento > 0){
-              portamento--; 
+              portamento--;
             } else portamento = 2;
             plotPort(WHITE);
             cursorNow = BLACK;
@@ -1767,10 +1767,10 @@ void menu() {
             if (readSetting(PORTAM_ADDR) != portamento) writeSetting(PORTAM_ADDR,portamento);
             break;
         }
-      }  
+      }
     } else if (subPB) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotPB(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1817,10 +1817,10 @@ void menu() {
             if (readSetting(PB_ADDR) != PBdepth) writeSetting(PB_ADDR,PBdepth);
             break;
         }
-      } 
+      }
     } else if (subExtra) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotExtra(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1867,10 +1867,10 @@ void menu() {
             if (readSetting(EXTRA_ADDR) != extraCT) writeSetting(EXTRA_ADDR,extraCT);
             break;
         }
-      } 
+      }
     } else if (subDeglitch) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotDeglitch(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1917,10 +1917,10 @@ void menu() {
             if (readSetting(DEGLITCH_ADDR) != deglitch) writeSetting(DEGLITCH_ADDR,deglitch);
             break;
         }
-      }    
+      }
     } else if (subPinky) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotPinkyKey(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -1967,10 +1967,10 @@ void menu() {
             if (readSetting(PINKY_KEY_ADDR) != pinkySetting) writeSetting(PINKY_KEY_ADDR,pinkySetting);
             break;
         }
-      }    
+      }
     } else {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         drawMenuCursor(setupCtMenuCursor, cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -2011,8 +2011,8 @@ void menu() {
             break;
         }
       }
-    } 
-  
+    }
+
 
 
 
@@ -2024,7 +2024,7 @@ void menu() {
     }
     if (subVibrato) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVibrato(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -2071,10 +2071,10 @@ void menu() {
             if (readSetting(VIBRATO_ADDR) != vibrato) writeSetting(VIBRATO_ADDR,vibrato);
             break;
         }
-      } 
+      }
     } else if (subVibSens) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVibSens(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -2121,10 +2121,10 @@ void menu() {
             if (readSetting(VIB_SENS_ADDR) != vibSens) writeSetting(VIB_SENS_ADDR,vibSens);
             break;
         }
-      } 
+      }
     } else if (subVibRetn) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVibRetn(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -2224,7 +2224,7 @@ void menu() {
       }
     } else if (subVibDirection) {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         plotVibDirection(cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -2270,7 +2270,7 @@ void menu() {
       }
     } else {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
-        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
         drawMenuCursor(vibratoMenuCursor, cursorNow);
         display.display();
         cursorBlinkTime = millis();
@@ -2311,11 +2311,11 @@ void menu() {
             break;
         }
       }
-    } 
+    }
   }
 
 
-  
+
 }
 
 void selectMainMenu(){
@@ -2398,7 +2398,7 @@ void selectRotatorMenu(){
       drawMenuCursor(rotatorMenuCursor, WHITE);
       display.display();
       cursorBlinkTime = millis();
-      drawSubPriority();    
+      drawSubPriority();
       break;
   }
 }
@@ -2549,7 +2549,7 @@ void drawBreathScreen(){
   display.println("BREATH");
   //display.drawLine(0,10,127,10,WHITE);
   display.setCursor(0,20);
-  display.println("THR"); 
+  display.println("THR");
   display.drawLine(25,17,120,17,WHITE);
   display.drawLine(25,18,25,19,WHITE);
   display.drawLine(120,18,120,19,WHITE);
@@ -2562,7 +2562,7 @@ void drawBreathScreen(){
   display.drawLine(25,36,25,40,WHITE);
   display.drawLine(120,36,120,40,WHITE);
   display.setCursor(0,50);
-  display.println("MAX"); 
+  display.println("MAX");
   display.drawLine(25,47,120,47,WHITE);
   display.drawLine(25,48,25,49,WHITE);
   display.drawLine(120,48,120,49,WHITE);
@@ -2592,7 +2592,7 @@ void drawPortamScreen(){
   display.println("PORTAMENTO");
   //display.drawLine(0,10,127,10,WHITE);
   display.setCursor(0,20);
-  display.println("THR"); 
+  display.println("THR");
   display.drawLine(25,17,120,17,WHITE);
   display.drawLine(25,18,25,19,WHITE);
   display.drawLine(120,18,120,19,WHITE);
@@ -2605,7 +2605,7 @@ void drawPortamScreen(){
   display.drawLine(25,36,25,40,WHITE);
   display.drawLine(120,36,120,40,WHITE);
   display.setCursor(0,50);
-  display.println("MAX"); 
+  display.println("MAX");
   display.drawLine(25,47,120,47,WHITE);
   display.drawLine(25,48,25,49,WHITE);
   display.drawLine(120,48,120,49,WHITE);
@@ -2635,7 +2635,7 @@ void drawPitchbScreen(){
   display.println("PITCH BEND");
   //display.drawLine(0,10,127,10,WHITE);
   display.setCursor(0,20);
-  display.println("THR"); 
+  display.println("THR");
   display.drawLine(25,17,120,17,WHITE);
   display.drawLine(25,18,25,19,WHITE);
   display.drawLine(120,18,120,19,WHITE);
@@ -2648,7 +2648,7 @@ void drawPitchbScreen(){
   display.drawLine(25,36,25,40,WHITE);
   display.drawLine(120,36,120,40,WHITE);
   display.setCursor(0,50);
-  display.println("MAX"); 
+  display.println("MAX");
   display.drawLine(25,47,120,47,WHITE);
   display.drawLine(25,48,25,49,WHITE);
   display.drawLine(120,48,120,49,WHITE);
@@ -2678,7 +2678,7 @@ void drawExtracScreen(){
   display.println("EXTRA CONTROLLER");
   //display.drawLine(0,10,127,10,WHITE);
   display.setCursor(0,20);
-  display.println("THR"); 
+  display.println("THR");
   display.drawLine(25,17,120,17,WHITE);
   display.drawLine(25,18,25,19,WHITE);
   display.drawLine(120,18,120,19,WHITE);
@@ -2691,7 +2691,7 @@ void drawExtracScreen(){
   display.drawLine(25,36,25,40,WHITE);
   display.drawLine(120,36,120,40,WHITE);
   display.setCursor(0,50);
-  display.println("MAX"); 
+  display.println("MAX");
   display.drawLine(25,47,120,47,WHITE);
   display.drawLine(25,48,25,49,WHITE);
   display.drawLine(120,48,120,49,WHITE);
@@ -2722,7 +2722,7 @@ void drawCtouchScreen(){
   display.println("TOUCH SENSE");
   //display.drawLine(0,10,127,10,WHITE);
   display.setCursor(0,20);
-  display.println("THR"); 
+  display.println("THR");
   display.drawLine(25,17,120,17,WHITE);
   display.drawLine(25,18,25,19,WHITE);
   display.drawLine(120,18,120,19,WHITE);
@@ -2856,7 +2856,7 @@ void plotTranspose(int color){
     display.println("-");
     display.setCursor(93,33);
     display.println(abs(transpose-12));
-  }  
+  }
 }
 void drawSubRotator(){
   display.fillRect(63,11,64,52,BLACK);
@@ -2882,7 +2882,7 @@ void plotRotator(int color,int value){
     display.println("-");
     display.setCursor(93,33);
     display.println(abs(value));
-  }  
+  }
 }
 
 void drawSubPriority(){
@@ -2901,9 +2901,9 @@ void plotPriority(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (priority){
-    display.println("ROT"); 
+    display.println("ROT");
   } else {
-    display.println("MEL"); 
+    display.println("MEL");
   }
 }
 
@@ -2931,7 +2931,7 @@ void plotOctave(int color){
     display.println("-");
     display.setCursor(93,33);
     display.println(abs(octave-3));
-  } 
+  }
 }
 
 void drawSubMIDI(){
@@ -2949,7 +2949,7 @@ void plotMIDI(int color){
   display.setTextColor(color);
   display.setTextSize(2);
   display.setCursor(90,33);
-  display.println(MIDIchannel); 
+  display.println(MIDIchannel);
 }
 
 void drawSubBreathCC(){
@@ -3004,11 +3004,11 @@ void plotBreathCC(int color){
         display.setCursor(83,33);
         display.println("CF");
         break;
-    } 
+    }
   } else {
     display.setCursor(79,33);
-    display.println("OFF"); 
-  } 
+    display.println("OFF");
+  }
 }
 
 void drawSubBreathAT(){
@@ -3027,9 +3027,9 @@ void plotBreathAT(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (breathAT){
-    display.println("ON"); 
+    display.println("ON");
   } else {
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 
@@ -3049,9 +3049,9 @@ void plotVelocity(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (velocity){
-    display.println(velocity); 
+    display.println(velocity);
   } else {
-    display.println("DYN"); 
+    display.println("DYN");
   }
 }
 
@@ -3123,7 +3123,7 @@ void plotCurve(int color){
       display.setCursor(83,33);
       display.println("Z2");
       break;
-  } 
+  }
 }
 
 
@@ -3143,11 +3143,11 @@ void plotPort(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (portamento == 1){
-    display.println("ON"); 
+    display.println("ON");
   } else if (portamento == 2){
     display.println("SW");
   } else {
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 
@@ -3169,9 +3169,9 @@ void plotPB(int color){
   if (PBdepth){
     display.println("1/");
     display.setCursor(101,33);
-    display.println(PBdepth); 
+    display.println(PBdepth);
   } else {
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 
@@ -3230,10 +3230,10 @@ void plotVibrato(int color){
   display.setTextSize(2);
   if (vibrato){
     display.setCursor(90,33);
-    display.println(vibrato); 
+    display.println(vibrato);
   } else {
     display.setCursor(79,33);
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 
@@ -3252,7 +3252,7 @@ void plotVibSens(int color){
   display.setTextColor(color);
   display.setTextSize(2);
   display.setCursor(90,33);
-  display.println(vibSens); 
+  display.println(vibSens);
 }
 
 void drawSubVibRetn(){
@@ -3270,7 +3270,7 @@ void plotVibRetn(int color){
   display.setTextColor(color);
   display.setTextSize(2);
   display.setCursor(90,33);
-  display.println(vibRetn); 
+  display.println(vibRetn);
 }
 
 void drawSubVibSquelch(){
@@ -3326,12 +3326,12 @@ void plotDeglitch(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (deglitch){
-    display.println(deglitch); 
+    display.println(deglitch);
     display.setCursor(105,40);
     display.setTextSize(1);
     display.println("ms");
   } else {
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 void drawSubPinkyKey(){
@@ -3350,12 +3350,12 @@ void plotPinkyKey(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (pinkySetting < 12){
-    display.println(pinkySetting - 12); 
+    display.println(pinkySetting - 12);
   } else if (pinkySetting == PBD) {
-    display.println("PBD"); 
+    display.println("PBD");
   } else {
     display.print("+");
-    display.println(pinkySetting - 12); 
+    display.println(pinkySetting - 12);
   }
 }
 void drawSubVelSmpDl(){
@@ -3374,12 +3374,12 @@ void plotVelSmpDl(int color){
   display.setTextSize(2);
   display.setCursor(79,33);
   if (velSmpDl){
-    display.println(velSmpDl); 
+    display.println(velSmpDl);
     display.setCursor(105,40);
     display.setTextSize(1);
     display.println("ms");
   } else {
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 
@@ -3399,10 +3399,10 @@ void plotVelBias(int color){
   display.setTextSize(2);
   if (velBias){
     display.setCursor(90,33);
-    display.println(velBias); 
+    display.println(velBias);
   } else {
     display.setCursor(79,33);
-    display.println("OFF"); 
+    display.println("OFF");
   }
 }
 
@@ -3537,4 +3537,3 @@ void drawSensorPixels(){
   }
   forcePix = 0;
 }
-
