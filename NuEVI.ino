@@ -24,8 +24,8 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 
 #define REVB
 
-//Uncomment the following line if you have Teensyduino 1.4.1 or later, to make pitch bend over USB-MIDI work.
-//#define NEWTEENSYDUINO
+//Comment out the following line if you have Teensyduino 1.4.0 or earlier, to make pitch bend over USB-MIDI work.
+#define NEWTEENSYDUINO
 
 
 // Pin definitions
