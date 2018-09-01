@@ -2171,7 +2171,103 @@ void menu() {
             if (readSetting(VIB_RETN_ADDR) != vibRetn) writeSetting(VIB_RETN_ADDR,vibRetn);
             break;
         }
-      }     
+      }
+    } else if (subVibSquelch) {
+      if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE;
+        plotVibSquelch(cursorNow);
+        display.display();
+        cursorBlinkTime = millis();
+      }
+      if (buttonPressedAndNotUsed){
+        buttonPressedAndNotUsed = 0;
+        switch (deumButtonState){
+          case 1:
+            // down
+            if (vibSquelch > 1){
+              plotVibSquelch(BLACK);
+              vibSquelch--;
+              plotVibSquelch(WHITE);
+              cursorNow = BLACK;
+              display.display();
+              cursorBlinkTime = millis();
+            }
+            break;
+          case 2:
+            // enter
+            plotVibSquelch(WHITE);
+            cursorNow = BLACK;
+            display.display();
+            subVibSquelch = 0;
+            if (readSetting(VIB_SQUELCH_ADDR) != vibSquelch) writeSetting(VIB_SQUELCH_ADDR,vibSquelch);
+            break;
+          case 4:
+            // up
+            if (vibSquelch < 30){
+              plotVibSquelch(BLACK);
+              vibSquelch++;
+              plotVibSquelch(WHITE);
+              cursorNow = BLACK;
+              display.display();
+              cursorBlinkTime = millis();
+            }
+            break;
+          case 8:
+            // menu
+            plotVibSquelch(WHITE);
+            cursorNow = BLACK;
+            display.display();
+            subVibSquelch = 0;
+            if (readSetting(VIB_SQUELCH_ADDR) != vibSquelch) writeSetting(VIB_SQUELCH_ADDR,vibSquelch);
+            break;
+        }
+      }
+    } else if (subVibDirection) {
+      if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
+        if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
+        plotVibDirection(cursorNow);
+        display.display();
+        cursorBlinkTime = millis();
+      }
+      if (buttonPressedAndNotUsed){
+        buttonPressedAndNotUsed = 0;
+        switch (deumButtonState){
+          case 1:
+            // down
+            plotVibDirection(BLACK);
+            vibDirection = !vibDirection;
+            plotVibDirection(WHITE);
+            cursorNow = BLACK;
+            display.display();
+            cursorBlinkTime = millis();
+            break;
+          case 2:
+            // enter
+            plotVibDirection(WHITE);
+            cursorNow = BLACK;
+            display.display();
+            subVibDirection = 0;
+            if (readSetting(VIB_DIRECTION_ADDR) != vibDirection) writeSetting(VIB_DIRECTION_ADDR,vibDirection);
+            break;
+          case 4:
+            // up
+            plotVibDirection(BLACK);
+            vibDirection = !vibDirection;
+            plotVibDirection(WHITE);
+            cursorNow = BLACK;
+            display.display();
+            cursorBlinkTime = millis();
+            break;
+          case 8:
+            // menu
+            plotVibDirection(WHITE);
+            cursorNow = BLACK;
+            display.display();
+            subVibDirection = 0;
+            if (readSetting(VIB_DIRECTION_ADDR) != vibDirection) writeSetting(VIB_DIRECTION_ADDR,vibDirection);
+            break;
+        }
+      }
     } else {
       if ((millis() - cursorBlinkTime) > cursorBlinkInterval) {
         if (cursorNow == WHITE) cursorNow = BLACK; else cursorNow = WHITE; 
@@ -2184,7 +2280,7 @@ void menu() {
         switch (deumButtonState){
           case 1:
             // down
-            if (vibratoMenuCursor < 3){
+            if (vibratoMenuCursor < 5){
               drawMenuCursor(vibratoMenuCursor, BLACK);
               vibratoMenuCursor++;
               drawMenuCursor(vibratoMenuCursor, WHITE);
@@ -2424,6 +2520,20 @@ void selectVibratoMenu(){
       display.display();
       cursorBlinkTime = millis();
       drawSubVibRetn();
+      break;
+    case 4:
+      subVibSquelch = 1;
+      drawMenuCursor(vibratoMenuCursor, WHITE);
+      display.display();
+      cursorBlinkTime = millis();
+      drawSubVibSquelch();
+      break;
+    case 5:
+      subVibDirection = 1;
+      drawMenuCursor(vibratoMenuCursor, WHITE);
+      display.display();
+      cursorBlinkTime = millis();
+      drawSubVibDirection();
       break;
   }
 }
@@ -3163,6 +3273,42 @@ void plotVibRetn(int color){
   display.println(vibRetn); 
 }
 
+void drawSubVibSquelch(){
+  display.fillRect(63,11,64,52,BLACK);
+  display.drawRect(63,11,64,52,WHITE);
+  display.setTextColor(WHITE);
+  display.setTextSize(1);
+  display.setCursor(81,15);
+  display.println("LEVEL");
+  plotVibSquelch(WHITE);
+  display.display();
+}
+ void plotVibSquelch(int color){
+  display.setTextColor(color);
+  display.setTextSize(2);
+  display.setCursor(83,33);
+  display.println(vibSquelch);
+}
+ void drawSubVibDirection(){
+  display.fillRect(63,11,64,52,BLACK);
+  display.drawRect(63,11,64,52,WHITE);
+  display.setTextColor(WHITE);
+  display.setTextSize(1);
+  display.setCursor(68,15);
+  display.println("DIRECTION");
+  plotVibDirection(WHITE);
+  display.display();
+}
+ void plotVibDirection(int color){
+  display.setTextColor(color);
+  display.setTextSize(2);
+  display.setCursor(83,33);
+  if (DNWD == vibDirection){
+    display.println("DN");
+  } else {
+    display.println("UP");
+  }
+}
 
 void drawSubDeglitch(){
   display.fillRect(63,11,64,52,BLACK);
@@ -3269,7 +3415,7 @@ void drawSetupCtMenuScreen(){
 }
 
 void drawVibratoMenuScreen(){
-  drawMenu("VIBRATO", -1, 3, "DEPTH","SENSE","RETURN");
+  drawMenu("VIBRATO", -1, 5, "DEPTH","SENSE","RETURN", "SQUELCH", "DIRECTION");
 }
 
 /*
