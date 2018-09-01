@@ -1,8 +1,6 @@
 ### muEVI
 
-muEVI is nothing other than a fork from [NuEVI](https://github.com/Trasselfrisyr/NuEVI). The intention is
-to refactor the codebase to be more modular, easier to maintain, and to make it easier for experimenting
-and hacking, while maintaining full NuEVI compatibility.
+muEVI is nothing other than a fork from [NuEVI](https://github.com/Trasselfrisyr/NuEVI). It's refactored to be more modular, and to make it easier to use as a base for experimenting and hacking, while maintaining as much compatibility with upstream as possible.
 
 mu is a letter next to nu in the greek alphabet.
 

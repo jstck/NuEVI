@@ -56,6 +56,7 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 #define UPWD 1
 #define DNWD 0
 
+
 #if defined(REVB)
 
 // MPR121 pins Rev B (angled pins at top edge for main keys and rollers)
@@ -528,6 +529,8 @@ int vibThr;          // this gets auto calibrated in setup
 int vibThrLo;
 int vibZero;
 
+int dz=15;
+byte dirUp=0;        // direction of first vibrato wave
 
 int fingeredNote;    // note calculated from fingering (switches), transpose and octave settings
 int fingeredNoteUntransposed; // note calculated from fingering (switches), for on the fly settings
