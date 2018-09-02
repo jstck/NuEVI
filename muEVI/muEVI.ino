@@ -52,6 +52,7 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 
 #define bLedPin 10
 #define pLedPin 9
+#define tLedPin 13 //Teensy onboard LED pin
 
 #define vMeterPin A11
 
@@ -602,29 +603,29 @@ void setup() {
   initDisplay();
 
   //auto-calibrate the vibrato threshold while showing splash screen
-  int cv1=touchRead(15);
+  int cv1=touchRead(vibratoPin);
   int bc1=analogRead(A0);
-  digitalWrite(13,HIGH);
+  digitalWrite(tLedPin,HIGH);
   delay(250);
-  int cv2=touchRead(15);
+  int cv2=touchRead(vibratoPin);
   int bc2=analogRead(A0);
-  digitalWrite(13,LOW);
+  digitalWrite(tLedPin,LOW);
   delay(250);
-  int cv3=touchRead(15);
+  int cv3=touchRead(vibratoPin);
   int bc3=analogRead(A0);
-  digitalWrite(13,HIGH);
+  digitalWrite(tLedPin,HIGH);
   delay(250);
-  digitalWrite(13,LOW);
-  int cv4=touchRead(15);
+  digitalWrite(tLedPin,LOW);
+  int cv4=touchRead(vibratoPin);
   int bc4=analogRead(A0);
   vibZero=(cv1+cv2+cv3+cv4)/4;
   vibThr=vibZero-vibSquelch;
   vibThrLo=vibZero+vibSquelch;
   breathCalZero=(bc1+bc2+bc3+bc4)/4;
   delay(250);
-  digitalWrite(13,HIGH);
+  digitalWrite(tLedPin,HIGH);
   delay(250);
-  digitalWrite(13,LOW);
+  digitalWrite(tLedPin,LOW);
 
   showVersion();
   delay(1500);
@@ -638,7 +639,7 @@ void setup() {
 
   setupMidi();
 
-  digitalWrite(13,HIGH); // Switch on the onboard LED to indicate power on/ready
+  digitalWrite(tLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready
 
 }
 
@@ -673,35 +674,35 @@ void loop() {
         if (exSensor >= ((extracThrVal+extracMaxVal)/2)){ // instant midi setting
           if ((fingeredNoteUntransposed >= 73) && (fingeredNoteUntransposed <= 88)) {
             MIDIchannel = fingeredNoteUntransposed - 72;  // Mid C and up
-            digitalWrite(13,LOW);
+            digitalWrite(tLedPin,LOW);
             delay(150);
-            digitalWrite(13,HIGH);
+            digitalWrite(tLedPin,HIGH);
           }
         } else {
           if (!pinkyKey){ // note number to patch number
             if (patch != fingeredNoteUntransposed){
               patch = fingeredNoteUntransposed;
               doPatchUpdate = 1;
-              digitalWrite(13,LOW);
+              digitalWrite(tLedPin,LOW);
               delay(150);
-              digitalWrite(13,HIGH);
+              digitalWrite(tLedPin,HIGH);
             }
           } else { // hi and lo patch numbers
             if (fingeredNoteUntransposed > 75){
               if (patch != patchLimit(fingeredNoteUntransposed + 24)){
                 patch = patchLimit(fingeredNoteUntransposed + 24); // add 24 to get high numbers 108 to 127
                 doPatchUpdate = 1;
-                digitalWrite(13,LOW);
+                digitalWrite(tLedPin,LOW);
                 delay(150);
-                digitalWrite(13,HIGH);
+                digitalWrite(tLedPin,HIGH);
               }
             } else {
               if (patch != patchLimit(fingeredNoteUntransposed - 36)){
                 patch = patchLimit(fingeredNoteUntransposed - 36); // subtract 36 to get low numbers 0 to 36
                 doPatchUpdate = 1;
-                digitalWrite(13,LOW);
+                digitalWrite(tLedPin,LOW);
                 delay(150);
-                digitalWrite(13,HIGH);
+                digitalWrite(tLedPin);
               }
             }
           }
@@ -1186,10 +1187,10 @@ void pitch_bend(){
   pitchBend=constrain(pitchBend, 0, 16383);
 
   if (subVibSquelch && (8192 != pitchBend)){
-    digitalWrite(13,LOW);
+    digitalWrite(tLedPin,LOW);
     vibLedOff = 1;
   } else if (vibLedOff){
-    digitalWrite(13,HIGH);
+    digitalWrite(tLedPin,HIGH);
     vibLedOff = 0;
   }
 
@@ -1209,25 +1210,25 @@ void doorKnobCheck(){
   if ((touchValue[K4Pin] < ctouchThrVal) && (touchValue[R1Pin] < ctouchThrVal) && (touchValue[R2Pin] < ctouchThrVal) && (touchValue[R3Pin] < ctouchThrVal)){ // doorknob grip on canister
     if (pbUp > ((pitchbMaxVal + pitchbThrVal)/2)) {
       gateOpen = 1;
-      digitalWrite(13,LOW);
+      digitalWrite(tLedPin,LOW);
       delay(50);
-      digitalWrite(13,HIGH);
+      digitalWrite(tLedPin,HIGH);
       delay(50);
     }
     else if (pbDn > ((pitchbMaxVal + pitchbThrVal)/2)) {
       gateOpen = 0;
       midiPanic();
-      digitalWrite(13,LOW);
+      digitalWrite(tLedPin,LOW);
       delay(50);
-      digitalWrite(13,HIGH);
+      digitalWrite(tLedPin,HIGH);
       delay(50);
-      digitalWrite(13,LOW);
+      digitalWrite(tLedPin,LOW);
       delay(50);
-      digitalWrite(13,HIGH);
+      digitalWrite(tLedPin,HIGH);
       delay(50);
-      digitalWrite(13,LOW);
+      digitalWrite(tLedPin,LOW);
       delay(50);
-      digitalWrite(13,HIGH);
+      digitalWrite(tLedPin,HIGH);
       delay(700);
     }
   }
