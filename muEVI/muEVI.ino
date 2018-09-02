@@ -6,6 +6,7 @@
 
 #include "menu.h"
 #include "midi.h"
+#include "settings.h"
 
 /*
 NAME:                 NuEVI
@@ -30,92 +31,8 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 //Comment out the following line if you have Teensyduino 1.4.0 or earlier, to make pitch bend over USB-MIDI work.
 #define NEWTEENSYDUINO
 
+#include "hardware.h" //Include hardware pin assignments after options affecting them
 
-
-// Pin definitions
-
-// Teensy pins
-
-#define specialKeyPin 0       // SK or S2
-#define halfPitchBendKeyPin 1 // PD or S1
-
-#define bitePin 17
-#define extraPin 16
-#define pbUpPin 23
-#define pbDnPin 22
-#define vibratoPin 15
-
-#define dPin 3
-#define ePin 4
-#define uPin 5
-#define mPin 6
-
-#define bLedPin 10
-#define pLedPin 9
-#define tLedPin 13 //Teensy onboard LED pin
-
-#define vMeterPin A11
-
-#define PBD 12
-#define UPWD 1
-#define DNWD 0
-
-
-#if defined(REVB)
-
-// MPR121 pins Rev B (angled pins at top edge for main keys and rollers)
-
-#define R1Pin 0
-#define R2Pin 2
-#define R3Pin 4
-#define R4Pin 6
-#define R5Pin 8
-
-#define K4Pin 10
-#define K1Pin 1
-#define K2Pin 3
-#define K3Pin 5
-#define K5Pin 7
-#define K6Pin 9
-#define K7Pin 11
-
-/*
- *    PINOUT ON PCB vs PINS ON MPR121 - Rev. B
- *
- *    (R1)  (R2) (R3/6) (R4)  (R5)  (K4)  <-> (00)  (02)  (04)  (06)  (08)  (10)
- *
- *    (K1)  (K2)  (K3)  (K5)  (K6)  (K7)  <-> (01)  (03)  (05)  (07)  (09)  (11)
- *
- */
-
-# else
-
-// MPR121 pins Rev A (upright pins below MPR121 for main keys and rollers)
-
-#define R1Pin 10
-#define R2Pin 11
-#define R3Pin 8
-#define R4Pin 9
-#define R5Pin 6
-
-#define K4Pin 7
-#define K1Pin 4
-#define K2Pin 5
-#define K3Pin 2
-#define K5Pin 3
-#define K6Pin 0
-#define K7Pin 1
-
-/*
- *    PINOUT ON PCB vs PINS ON MPR121 - Rev. A
- *
- *    (R2)  (R4)  (K4)  (K2)  (K5)  (K7)  <-> (11)  (09)  (07)  (05)  (03)  (01)
- *
- *    (R1) (R3/6) (R5)  (K1)  (K3)  (K6)  <-> (10)  (08)  (06)  (04)  (02)  (00)
- *
- */
-
-#endif
 
 #define ON_Delay   20   // Set Delay after ON threshold before velocity is checked (wait for tounging peak)
 //#define touch_Thr 1200  // sensitivity for Teensy touch sensors
@@ -140,92 +57,6 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 
 // A note is sounding
 #define NOTE_ON 3
-
-
-// EEPROM addresses for settings
-#define VERSION_ADDR 0
-#define BREATH_THR_ADDR 2
-#define BREATH_MAX_ADDR 4
-#define PORTAM_THR_ADDR 6
-#define PORTAM_MAX_ADDR 8
-#define PITCHB_THR_ADDR 10
-#define PITCHB_MAX_ADDR 12
-#define TRANSP_ADDR 14
-#define MIDI_ADDR 16
-#define BREATH_CC_ADDR 18
-#define BREATH_AT_ADDR 20
-#define VELOCITY_ADDR 22
-#define PORTAM_ADDR 24
-#define PB_ADDR 26
-#define EXTRA_ADDR 28
-#define VIBRATO_ADDR 30
-#define DEGLITCH_ADDR 32
-#define EXTRAC_THR_ADDR 34
-#define EXTRAC_MAX_ADDR 36
-#define PATCH_ADDR 38
-#define OCTAVE_ADDR 40
-#define CTOUCH_THR_ADDR 42
-#define BREATHCURVE_ADDR 44
-#define VEL_SMP_DL_ADDR 46
-#define VEL_BIAS_ADDR 48
-#define PINKY_KEY_ADDR 50
-#define FP1_ADDR 52
-#define FP2_ADDR 54
-#define FP3_ADDR 56
-#define FP4_ADDR 58
-#define FP5_ADDR 60
-#define FP6_ADDR 62
-#define FP7_ADDR 64
-#define DIPSW_BITS_ADDR 66
-#define PARAL_ADDR 68
-#define ROTN1_ADDR 70
-#define ROTN2_ADDR 72
-#define ROTN3_ADDR 74
-#define ROTN4_ADDR 76
-#define PRIO_ADDR 78
-#define VIB_SENS_ADDR 80
-#define VIB_RETN_ADDR 82
-#define VIB_SQUELCH_ADDR 84
-#define VIB_DIRECTION_ADDR 86
-
-//"factory" values for settings
-#define VERSION 31
-#define BREATH_THR_FACTORY 1400
-#define BREATH_MAX_FACTORY 4000
-#define PORTAM_THR_FACTORY 2600
-#define PORTAM_MAX_FACTORY 3300
-#define PITCHB_THR_FACTORY 1400
-#define PITCHB_MAX_FACTORY 2300
-#define EXTRAC_THR_FACTORY 1200
-#define EXTRAC_MAX_FACTORY 2400
-#define TRANSP_FACTORY 12   // 12 is 0 transpose
-#define MIDI_FACTORY 1      // 1-16
-#define BREATH_CC_FACTORY 2 //thats CC#2, see ccList
-#define BREATH_AT_FACTORY 0 //aftertouch default off
-#define VELOCITY_FACTORY 0  // 0 is dynamic/breath controlled velocity
-#define PORTAM_FACTORY 2    // 0 - OFF, 1 - ON, 2 - SW
-#define PB_FACTORY 1        // 0 - OFF, 1 - 12
-#define EXTRA_FACTORY 2     // 0 - OFF, 1 - Modulation wheel, 2 - Foot pedal, 3 - Filter Cutoff, 4 - Sustain pedal
-#define VIBRATO_FACTORY 4   // 0 - OFF, 1 - 9 depth
-#define DEGLITCH_FACTORY 20 // 0 - OFF, 5 to 70 ms in steps of 5
-#define PATCH_FACTORY 1     // MIDI program change 1-128
-#define OCTAVE_FACTORY 3    // 3 is 0 octave change
-#define CTOUCH_THR_FACTORY 125  // MPR121 touch threshold
-#define BREATHCURVE_FACTORY 4 // 0 to 12 (-4 to +4, S1 to S4)
-#define VEL_SMP_DL_FACTORY 20 // 0 to 30 ms in steps of 5
-#define VEL_BIAS_FACTORY 0  // 0 to 9
-#define PINKY_KEY_FACTORY 12 // 0 - 11 (QuickTranspose -12 to -1), 12 (pb/2), 13 - 22 (QuickTranspose +1 to +12)
-#define DIPSW_BITS_FACTORY 0 // virtual dip switch settings for special modes (work in progress)
-#define PARAL_FACTORY 31 // 7 (+ 24) Rotator parallel
-#define ROTN1_FACTORY 19 // -5 (+24) Rotation 1
-#define ROTN2_FACTORY 14 // -10 (+24) Rotation 2
-#define ROTN3_FACTORY 17 // -7 (+24) Rotation 3
-#define ROTN4_FACTORY 10 // -14 (+24) Rotation 4
-#define PRIO_FACTORY 0 // Mono priority 0 - BAS(e note), 1 - ROT(ating note)
-#define VIB_SENS_FACTORY 2 // 1 least sensitive, higher more sensitive
-#define VIB_RETN_FACTORY 2 // 1 fast return, higher slower return
-#define VIB_SQUELCH_FACTORY 15 // 0 to 30, vib signal squelch
-#define VIB_DIRECTION_FACTORY 0
 
 
 //variables setup
@@ -489,58 +320,10 @@ void setup() {
 
 
   // if stored settings are not for current version, or Enter+Menu are pressed at startup, they are replaced by factory settings
-
-  if ((readSetting(VERSION_ADDR) != VERSION) && (readSetting(VERSION_ADDR) < 24) || (!digitalRead(ePin) && !digitalRead(mPin))){
-    writeSetting(VERSION_ADDR,VERSION);
-    writeSetting(BREATH_THR_ADDR,BREATH_THR_FACTORY);
-    writeSetting(BREATH_MAX_ADDR,BREATH_MAX_FACTORY);
-    writeSetting(PORTAM_THR_ADDR,PORTAM_THR_FACTORY);
-    writeSetting(PORTAM_MAX_ADDR,PORTAM_MAX_FACTORY);
-    writeSetting(PITCHB_THR_ADDR,PITCHB_THR_FACTORY);
-    writeSetting(PITCHB_MAX_ADDR,PITCHB_MAX_FACTORY);
-    writeSetting(EXTRAC_THR_ADDR,EXTRAC_THR_FACTORY);
-    writeSetting(EXTRAC_MAX_ADDR,EXTRAC_MAX_FACTORY);
-    writeSetting(CTOUCH_THR_ADDR,CTOUCH_THR_FACTORY);
+  if ((readSetting(VERSION_ADDR) != VERSION) || (!digitalRead(ePin) && !digitalRead(mPin))) {
+    factoryReset();
   }
 
-  if ((readSetting(VERSION_ADDR) != VERSION) || (!digitalRead(ePin) && !digitalRead(mPin))){
-    writeSetting(VERSION_ADDR,VERSION);
-
-    writeSetting(TRANSP_ADDR,TRANSP_FACTORY);
-    writeSetting(MIDI_ADDR,MIDI_FACTORY);
-    writeSetting(BREATH_CC_ADDR,BREATH_CC_FACTORY);
-    writeSetting(BREATH_AT_ADDR,BREATH_AT_FACTORY);
-    writeSetting(VELOCITY_ADDR,VELOCITY_FACTORY);
-    writeSetting(PORTAM_ADDR,PORTAM_FACTORY);
-    writeSetting(PB_ADDR,PB_FACTORY);
-    writeSetting(EXTRA_ADDR,EXTRA_FACTORY);
-    writeSetting(VIBRATO_ADDR,VIBRATO_FACTORY);
-    writeSetting(DEGLITCH_ADDR,DEGLITCH_FACTORY);
-    writeSetting(PATCH_ADDR,PATCH_FACTORY);
-    writeSetting(OCTAVE_ADDR,OCTAVE_FACTORY);
-    writeSetting(BREATHCURVE_ADDR,BREATHCURVE_FACTORY);
-    writeSetting(VEL_SMP_DL_ADDR,VEL_SMP_DL_FACTORY);
-    writeSetting(VEL_BIAS_ADDR,VEL_BIAS_FACTORY);
-    writeSetting(PINKY_KEY_ADDR,PINKY_KEY_FACTORY);
-    writeSetting(FP1_ADDR,0);
-    writeSetting(FP2_ADDR,0);
-    writeSetting(FP3_ADDR,0);
-    writeSetting(FP4_ADDR,0);
-    writeSetting(FP5_ADDR,0);
-    writeSetting(FP6_ADDR,0);
-    writeSetting(FP7_ADDR,0);
-    writeSetting(DIPSW_BITS_ADDR,DIPSW_BITS_FACTORY);
-    writeSetting(PARAL_ADDR,PARAL_FACTORY);
-    writeSetting(ROTN1_ADDR,ROTN1_FACTORY);
-    writeSetting(ROTN2_ADDR,ROTN2_FACTORY);
-    writeSetting(ROTN3_ADDR,ROTN3_FACTORY);
-    writeSetting(ROTN4_ADDR,ROTN4_FACTORY);
-    writeSetting(PRIO_ADDR,PRIO_FACTORY);
-    writeSetting(VIB_SENS_ADDR,VIB_SENS_FACTORY);
-    writeSetting(VIB_RETN_ADDR,VIB_RETN_FACTORY);
-    writeSetting(VIB_SQUELCH_ADDR,VIB_SQUELCH_FACTORY);
-    writeSetting(VIB_DIRECTION_ADDR,VIB_DIRECTION_FACTORY);
-  }
   // read settings from EEPROM
   breathThrVal = readSetting(BREATH_THR_ADDR);
   breathMaxVal = readSetting(BREATH_MAX_ADDR);
@@ -605,17 +388,17 @@ void setup() {
   //auto-calibrate the vibrato threshold while showing splash screen
   int cv1=touchRead(vibratoPin);
   int bc1=analogRead(A0);
-  digitalWrite(tLedPin,HIGH);
+  digitalWrite(statusLedPin,HIGH);
   delay(250);
   int cv2=touchRead(vibratoPin);
   int bc2=analogRead(A0);
-  digitalWrite(tLedPin,LOW);
+  digitalWrite(statusLedPin,LOW);
   delay(250);
   int cv3=touchRead(vibratoPin);
   int bc3=analogRead(A0);
-  digitalWrite(tLedPin,HIGH);
+  digitalWrite(statusLedPin,HIGH);
   delay(250);
-  digitalWrite(tLedPin,LOW);
+  digitalWrite(statusLedPin,LOW);
   int cv4=touchRead(vibratoPin);
   int bc4=analogRead(A0);
   vibZero=(cv1+cv2+cv3+cv4)/4;
@@ -623,9 +406,9 @@ void setup() {
   vibThrLo=vibZero+vibSquelch;
   breathCalZero=(bc1+bc2+bc3+bc4)/4;
   delay(250);
-  digitalWrite(tLedPin,HIGH);
+  digitalWrite(statusLedPin,HIGH);
   delay(250);
-  digitalWrite(tLedPin,LOW);
+  digitalWrite(statusLedPin,LOW);
 
   showVersion();
   delay(1500);
@@ -639,7 +422,7 @@ void setup() {
 
   setupMidi();
 
-  digitalWrite(tLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready
+  digitalWrite(statusLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready
 
 }
 
@@ -674,35 +457,35 @@ void loop() {
         if (exSensor >= ((extracThrVal+extracMaxVal)/2)){ // instant midi setting
           if ((fingeredNoteUntransposed >= 73) && (fingeredNoteUntransposed <= 88)) {
             MIDIchannel = fingeredNoteUntransposed - 72;  // Mid C and up
-            digitalWrite(tLedPin,LOW);
+            digitalWrite(statusLedPin,LOW);
             delay(150);
-            digitalWrite(tLedPin,HIGH);
+            digitalWrite(statusLedPin,HIGH);
           }
         } else {
           if (!pinkyKey){ // note number to patch number
             if (patch != fingeredNoteUntransposed){
               patch = fingeredNoteUntransposed;
               doPatchUpdate = 1;
-              digitalWrite(tLedPin,LOW);
+              digitalWrite(statusLedPin,LOW);
               delay(150);
-              digitalWrite(tLedPin,HIGH);
+              digitalWrite(statusLedPin,HIGH);
             }
           } else { // hi and lo patch numbers
             if (fingeredNoteUntransposed > 75){
               if (patch != patchLimit(fingeredNoteUntransposed + 24)){
                 patch = patchLimit(fingeredNoteUntransposed + 24); // add 24 to get high numbers 108 to 127
                 doPatchUpdate = 1;
-                digitalWrite(tLedPin,LOW);
+                digitalWrite(statusLedPin,LOW);
                 delay(150);
-                digitalWrite(tLedPin,HIGH);
+                digitalWrite(statusLedPin,HIGH);
               }
             } else {
               if (patch != patchLimit(fingeredNoteUntransposed - 36)){
                 patch = patchLimit(fingeredNoteUntransposed - 36); // subtract 36 to get low numbers 0 to 36
                 doPatchUpdate = 1;
-                digitalWrite(tLedPin,LOW);
+                digitalWrite(statusLedPin,LOW);
                 delay(150);
-                digitalWrite(tLedPin);
+                digitalWrite(statusLedPin, HIGH);
               }
             }
           }
@@ -1187,10 +970,10 @@ void pitch_bend(){
   pitchBend=constrain(pitchBend, 0, 16383);
 
   if (subVibSquelch && (8192 != pitchBend)){
-    digitalWrite(tLedPin,LOW);
+    digitalWrite(statusLedPin,LOW);
     vibLedOff = 1;
   } else if (vibLedOff){
-    digitalWrite(tLedPin,HIGH);
+    digitalWrite(statusLedPin,HIGH);
     vibLedOff = 0;
   }
 
@@ -1210,25 +993,25 @@ void doorKnobCheck(){
   if ((touchValue[K4Pin] < ctouchThrVal) && (touchValue[R1Pin] < ctouchThrVal) && (touchValue[R2Pin] < ctouchThrVal) && (touchValue[R3Pin] < ctouchThrVal)){ // doorknob grip on canister
     if (pbUp > ((pitchbMaxVal + pitchbThrVal)/2)) {
       gateOpen = 1;
-      digitalWrite(tLedPin,LOW);
+      digitalWrite(statusLedPin,LOW);
       delay(50);
-      digitalWrite(tLedPin,HIGH);
+      digitalWrite(statusLedPin,HIGH);
       delay(50);
     }
     else if (pbDn > ((pitchbMaxVal + pitchbThrVal)/2)) {
       gateOpen = 0;
       midiPanic();
-      digitalWrite(tLedPin,LOW);
+      digitalWrite(statusLedPin,LOW);
       delay(50);
-      digitalWrite(tLedPin,HIGH);
+      digitalWrite(statusLedPin,HIGH);
       delay(50);
-      digitalWrite(tLedPin,LOW);
+      digitalWrite(statusLedPin,LOW);
       delay(50);
-      digitalWrite(tLedPin,HIGH);
+      digitalWrite(statusLedPin,HIGH);
       delay(50);
-      digitalWrite(tLedPin,LOW);
+      digitalWrite(statusLedPin,LOW);
       delay(50);
-      digitalWrite(tLedPin,HIGH);
+      digitalWrite(statusLedPin,HIGH);
       delay(700);
     }
   }
@@ -1407,25 +1190,4 @@ void clearFPS(int trills){
   fastPatch[trills-1] = 0;
   writeSetting(FP1_ADDR+2*(trills-1),0);
   FPD = 3;
-}
-
-
-void writeSetting(byte address, unsigned short value){
-  union {
-    byte v[2];
-    unsigned short val;
-  } data;
-  data.val = value;
-  EEPROM.write(address, data.v[0]);
-  EEPROM.write(address+1, data.v[1]);
-}
-
-unsigned short readSetting(byte address){
-  union {
-    byte v[2];
-    unsigned short val;
-  } data;
-  data.v[0] = EEPROM.read(address);
-  data.v[1] = EEPROM.read(address+1);
-  return data.val;
 }

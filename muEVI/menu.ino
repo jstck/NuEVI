@@ -1,8 +1,11 @@
 #include "menu.h"
+#include "hardware.h"
 
 Adafruit_SSD1306 display(OLED_RESET);
 
  // 'NuEVI' logo
+#define LOGO16_GLCD_WIDTH  128
+#define LOGO16_GLCD_HEIGHT 64
 static const unsigned char PROGMEM nuevi_logo_bmp[] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -81,7 +84,7 @@ void initDisplay() {
   // internally, this will display the splashscreen.
 
   display.clearDisplay();
-  display.drawBitmap(0,0,nuevi_logo_bmp,128,64,1);
+  display.drawBitmap(0, 0, nuevi_logo_bmp, LOGO16_GLCD_WIDTH, LOGO16_GLCD_HEIGHT, 1);
   display.display();
 
   state = DISPLAYOFF_IDL;
@@ -212,24 +215,24 @@ void menu() {
             legacyBrAct = !legacyBrAct;
             dipSwBits = dipSwBits ^ (1<<2);
             writeSetting(DIPSW_BITS_ADDR,dipSwBits);
-            digitalWrite(13,LOW);
+            digitalWrite(statusLedPin,LOW);
             delay(150);
-            digitalWrite(13,HIGH);
+            digitalWrite(statusLedPin,HIGH);
             delay(150);
-            digitalWrite(13,LOW);
+            digitalWrite(statusLedPin,LOW);
             delay(150);
-            digitalWrite(13,HIGH);
+            digitalWrite(statusLedPin,HIGH);
           } else if ((exSensor >= ((extracThrVal+extracMaxVal)/2))){ // switch pb pad activated legacy settings control on/off
             legacy = !legacy;
             dipSwBits = dipSwBits ^ (1<<1);
             writeSetting(DIPSW_BITS_ADDR,dipSwBits);
-            digitalWrite(13,LOW);
+            digitalWrite(statusLedPin,LOW);
             delay(150);
-            digitalWrite(13,HIGH);
+            digitalWrite(statusLedPin,HIGH);
             delay(150);
-            digitalWrite(13,LOW);
+            digitalWrite(statusLedPin,LOW);
             delay(150);
-            digitalWrite(13,HIGH);
+            digitalWrite(statusLedPin,HIGH);
           } else if (pinkyKey){
             display.ssd1306_command(SSD1306_DISPLAYON);
             state = ROTATOR_MENU;
