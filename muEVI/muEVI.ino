@@ -316,7 +316,7 @@ void setup() {
 
   pinMode(bLedPin, OUTPUT);   // breath indicator LED
   pinMode(pLedPin, OUTPUT);   // portam indicator LED
-  pinMode(13,OUTPUT);         // Teensy onboard LED
+  pinMode(statusLedPin,OUTPUT); // Teensy onboard LED
 
 
   // if stored settings are not for current version, or Enter+Menu are pressed at startup, they are replaced by factory settings
@@ -1167,27 +1167,4 @@ void readSwitches(){
   // Calculate midi note number from pressed keys
   fingeredNote=startNote-2*K1-K2-3*K3-5*K4+2*K5+K6+4*K7+octaveR*12+(octave-3)*12+transpose-12+qTransp;
   fingeredNoteUntransposed=startNote-2*K1-K2-3*K3-5*K4+2*K5+K6+4*K7+octaveR*12;
-}
-
-//***********************************************************
-
-int readTrills(){
-  readSwitches();
-  return K5+2*K6+4*K7;
-}
-
-//***********************************************************
-
-void setFPS(int trills){
-  fastPatch[trills-1] = patch;
-  writeSetting(FP1_ADDR+2*(trills-1),patch);
-  FPD = 2;
-}
-
-//***********************************************************
-
-void clearFPS(int trills){
-  fastPatch[trills-1] = 0;
-  writeSetting(FP1_ADDR+2*(trills-1),0);
-  FPD = 3;
 }

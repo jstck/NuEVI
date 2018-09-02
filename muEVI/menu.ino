@@ -3636,3 +3636,23 @@ void drawSensorPixels(){
   }
   forcePix = 0;
 }
+
+
+int readTrills(){
+  readSwitches();
+  return K5+2*K6+4*K7;
+}
+
+
+void setFPS(int trills){
+  fastPatch[trills-1] = patch;
+  writeSetting(FP1_ADDR+2*(trills-1),patch);
+  FPD = 2;
+}
+
+
+void clearFPS(int trills){
+  fastPatch[trills-1] = 0;
+  writeSetting(FP1_ADDR+2*(trills-1),0);
+  FPD = 3;
+}

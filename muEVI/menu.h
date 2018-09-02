@@ -21,6 +21,10 @@ void showVersion();
 void menu();
 void drawSensorPixels();
 
+int readTrills();
+void setFPS(int trills);
+void clearFPS(int trills);
+
 
 //display states
 #define DISPLAYOFF_IDL 0
