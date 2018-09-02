@@ -1171,5 +1171,5 @@ void readSwitches(){
     +2*K5+K6+4*K7  //Trill keys
     +octaveR*12;   //Octave rollers
 
-  fingeredNote=fingeredNoteUntransposed+(octave-3)*12+transpose-12+qTransp;
+  fingeredNote=startNote-2*K1-K2-3*K3-5*K4+2*K5+K6+4*K7+octaveR*12+(octave-3)*12+transpose-12+qTransp;
 }
