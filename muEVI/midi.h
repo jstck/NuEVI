@@ -1,8 +1,9 @@
 #ifndef _MIDI_H
 #define _MIDI_H
 
-#define USB_MIDI    //Send USB midi
-#define SERIAL_MIDI //Send serial MIDI
+//Control which MIDI interfaces to use
+#define SEND_USB_MIDI
+#define SEND_SERIAL_MIDI
 
 void setupMidi();
 void setMidiChannel(byte channel);
