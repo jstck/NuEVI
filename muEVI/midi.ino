@@ -5,8 +5,10 @@
 #endif
 
 void setupMidi() {
+#ifdef SERIAL_MIDI
   Serial3.begin(31250);   // start serial with midi baudrate 31250
   Serial3.flush();
+#endif
 }
 
 //Separate MIDI channels for USB and serial. Serial is 0-based, one less than everything else.
@@ -23,33 +25,43 @@ byte getMidiChannel() {
 }
 
 void midiSendNoteOn(byte note, int velocity) {
+#ifdef USB_MIDI
   usbMIDI.sendNoteOn(note, velocitySend, activeMIDIchannel);
+#endif
   midiSend3B((0x90 | serialMIDIchannel), note, velocity);
 }
 
 void midiSendNoteOff(byte note, int velocity) {
+#ifdef USB_MIDI
   usbMIDI.sendNoteOff(note, velocitySend, activeMIDIchannel);
+#endif
   midiSend3B((0x80 | serialMIDIchannel), note, velocity);
 }
 
 void midiSendProgramChange(byte value) {
+#ifdef USB_MIDI
   usbMIDI.sendProgramChange(value, activeMIDIchannel);
+#endif
   midiSend2B((0xC0 | serialMIDIchannel), value);
 }
 
 void midiSendControlChange(byte ccNumber, int ccValue) {
+#ifdef USB_MIDI
   usbMIDI.sendControlChange(ccNumber, ccValue, activeMIDIchannel);
+#endif
   midiSend3B((0xB0 | serialMIDIchannel), ccNumber, ccValue);
 }
 
 void midiSendPitchBend(int pbValue) {
 
+#ifdef USB_MIDI
   // Newer teensyduino (>=1.4.1 have a signed value, 1.4.0 use an midi wire format (unsigned, with no bend = 8192)
-  #if defined(NEWTEENSYDUINO)
+  #ifdef NEWTEENSYDUINO
   usbMIDI.sendPitchBend(pbValue-8192, activeMIDIchannel);
   #else
   usbMIDI.sendPitchBend(pbValue, activeMIDIchannel);
-  #endif
+  #endif //NEWTEENSYDUINO
+#endif //USB_MIDI
 
   //Split 14-bit pitch bend value into two 7-bit values
   byte pitchLSB = pbValue & 0x007F;
@@ -57,9 +69,11 @@ void midiSendPitchBend(int pbValue) {
   midiSend3B((0xE0 | serialMIDIchannel), pitchLSB, pitchMSB);
 }
 
-//  Send din aftertouch
+//  Send aftertouch
 void midiSendAfterTouch(byte value) {
+#ifdef USB_MIDI
   usbMIDI.sendAfterTouch(value, activeMIDIchannel);
+#endif
   midiSend2B((0xD0 | serialMIDIchannel), value);
 }
 
@@ -76,13 +90,18 @@ void midiReset() {
 
 //  Send a three byte serial midi message
 void midiSend3B(byte midistatus, byte data1, byte data2) {
+
+#ifdef SERIAL_MIDI
   Serial3.write(midistatus);
   Serial3.write(data1);
   Serial3.write(data2);
+#endif
 }
 
 //  Send a two byte serial midi message
 void midiSend2B(byte midistatus, byte data) {
+#ifdef SERIAL_MIDI
   Serial3.write(midistatus);
   Serial3.write(data);
+#endif
 }
