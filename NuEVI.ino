@@ -22,7 +22,7 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 
 // Compile options, comment/uncomment to change
 
-#define FIRMWARE_VERSION "1.2.6"    // FIRMWARE VERSION NUMBER HERE <<<<<<<<<<<<<<<<<<<<<<<
+#define FIRMWARE_VERSION "1.2.6t"    // FIRMWARE VERSION NUMBER HERE <<<<<<<<<<<<<<<<<<<<<<<
 
 #define REVB
 
@@ -120,11 +120,6 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 //#define touch_Thr 1200  // sensitivity for Teensy touch sensors
 #define CCN_Port 5      // Controller number for portamento level
 #define CCN_PortOnOff 65// Controller number for portamento on/off
-
-
-// Send CC data no more than every CC_INTERVAL
-// milliseconds
-#define CC_INTERVAL 5
 
 
 // The three states of our main state machine
@@ -572,6 +567,13 @@ byte portamLedBrightness = 100; // up to 255, PWM
 
 Adafruit_MPR121 touchSensor = Adafruit_MPR121(); // This is the 12-input touch sensor
 
+FilterOnePole breathFilter( LOWPASS, filterFreq );   // create a one pole (RC) lowpass filter
+
+IntervalTimer fastTimer;
+IntervalTimer slowTimer;
+
+uint16_t fastLoopCount=0;
+uint16_t slowLoopCount=0;
 
 //_______________________________________________________________________________________________ SETUP
 
@@ -762,21 +764,68 @@ void setup() {
   Serial3.begin(31250);   // start serial with midi baudrate 31250
   Serial3.flush();
 
+
+  fastTimer.priority(128);
+  slowTimer.priority(192);
+
+  fastTimer.begin(fastLoop, 2000);
+  slowTimer.begin(slowLoop, 20000);
+
+
   digitalWrite(statusLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready
 
+}
+
+//"Fast" loop, runs every 2ms.
+void fastLoop() {
+  //Every loop, sample breath sensor
+  breathFilter.input(analogRead(breathSensorPin)); //Read analog sensor and send to filter
+  pressureSensor = constrain((int)breathFilter.output(),0,4095); // Get the filtered output
+
+  //Every even loop (4ms), run breath sensor output
+  if(fastLoopCount%2 == 0) {
+    breath();
+  } else {
+    //On odd loops, run pitch bend/vibrato, portamento/bite and extra/lip sensor in turns (every 6th loop each)
+    int loopCadence = (fastLoopCount / 2)%3;
+    switch(loopCadence) {
+      case 0:
+        pitch_bend();
+        break;
+      case 1:
+        portamento_();
+        break;
+      case 2:
+        extraController();
+        break;
+    }
+  }
+  ++fastLoopCount;
+}
+
+void slowLoop() {
+  //Do "non-timing-critical" things in turn every 20ms, 80ms each
+  int loopCadence = slowLoopCount++ & 0x0003; //2lsb, 0-3
+  switch(loopCadence) {
+    case 0:
+      statusLEDs();
+      break;
+    case 1:
+      menu();
+      break;
+    case 2:
+      doorKnobCheck();
+      break;
+    case 3:
+      drawSensorPixels();
+      break;
+  }
 }
 
 //_______________________________________________________________________________________________ MAIN LOOP
 
 void loop() {
-  mainLoop();
-}
-
-void mainLoop() {
-  FilterOnePole breathFilter( LOWPASS, filterFreq );   // create a one pole (RC) lowpass filter
   while (1){
-    breathFilter.input(analogRead(breathSensorPin));
-    pressureSensor = constrain((int)breathFilter.output(),0,4095); // Get the filtered pressure sensor reading from analog pin A0, input from sensor MP3V5004GP
     //pressureSensor = analogRead(A0);
     //pressureSensor =  smooth(analogRead(0), filterVal, smoothedVal);   // second parameter determines smoothness  - 0 is off,  .9999 is max smooth
     if (mainState == NOTE_OFF) {
@@ -896,7 +945,7 @@ void mainLoop() {
             velocitySend = constrain(velocitySend+velocitySend*.1*velBias,1,127);
             //velocitySend = map(constrain(max(pressureSensor,initial_breath_value),breathThrVal,breathMaxVal),breathThrVal,breathMaxVal,1,127);
           } else velocitySend = velocity;
-          breath(); // send breath data
+          //breath(); // send breath data
           fingeredNote=noteValueCheck(fingeredNote);
           if (priority){ // mono prio to last chord note
             usbMIDI.sendNoteOn(fingeredNote, velocitySend, activeMIDIchannel); // send Note On message for new note
@@ -1085,30 +1134,7 @@ void mainLoop() {
       }
       if (pressureSensor > breathThrVal) cursorBlinkTime = millis(); // keep display from updating with cursor blinking if breath is over thr
     }
-    // Is it time to send more CC data?
-    if (millis() - ccSendTime > CC_INTERVAL) {
-      // deal with Breath, Pitch Bend, Modulation, etc.
-      breath();
-      halfTime = !halfTime;
-      if (halfTime){
-        pitch_bend();
-        portamento_();
-      } else {
-        extraController();
-        statusLEDs();
-        doorKnobCheck();
-      }
-      ccSendTime = millis();
-    }
-    if (millis() - pixelUpdateTime > pixelUpdateInterval){
-      // even if we just alter a pixel, the whole display is redrawn (35ms of MPU lockup) and we can't do that all the time
-      // this is one of the big reasons the display is for setup use only
-      drawSensorPixels(); // live sensor monitoring for the setup screens
-      pixelUpdateTime = millis();
-    }
     lastFingering=fingeredNote;
-    //do menu stuff
-    menu();
   }
 }
 
