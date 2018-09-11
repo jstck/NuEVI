@@ -124,7 +124,7 @@ PROGRAMME FUNCTION:   EVI Wind Controller using the Freescale MP3V5004GP breath 
 
 // Send CC data no more than every CC_INTERVAL
 // milliseconds
-#define CC_INTERVAL 5
+#define CC_INTERVAL 4
 
 
 // The three states of our main state machine
@@ -572,6 +572,13 @@ byte portamLedBrightness = 100; // up to 255, PWM
 
 Adafruit_MPR121 touchSensor = Adafruit_MPR121(); // This is the 12-input touch sensor
 
+typedef struct {
+  void (*f)();
+  long interval;
+  long last;
+} intervalFunction;
+
+intervalFunction iFnList[8];
 
 //_______________________________________________________________________________________________ SETUP
 
@@ -762,8 +769,54 @@ void setup() {
   Serial3.begin(31250);   // start serial with midi baudrate 31250
   Serial3.flush();
 
+  //Register functions to be run at a certain interval
+  iFnList[0].f = breath;
+  iFnList[0].interval = CC_INTERVAL;
+
+  iFnList[1].f = pitch_bend;
+  iFnList[1].interval = CC_INTERVAL*2;
+
+  iFnList[2].f = portamento_;
+  iFnList[2].interval = CC_INTERVAL*2;
+
+  iFnList[3].f = extraController;
+  iFnList[3].interval = CC_INTERVAL*2;
+
+  iFnList[4].f = statusLEDs;
+  iFnList[4].interval = CC_INTERVAL*5;
+
+  iFnList[5].f = doorKnobCheck;
+  iFnList[5].interval = CC_INTERVAL*5;
+
+  iFnList[6].f = drawSensorPixels;
+  iFnList[6].interval = pixelUpdateInterval;
+
+  iFnList[7].f = menu;
+  iFnList[7].interval = 50;
+
+  for(int i=0; i<8; ++i) iFnList[i].last = millis();
+
+
   digitalWrite(statusLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready
 
+}
+
+#define INTERVAL_BUDGET 8
+
+void runIntervals()
+{
+  long start=millis();
+  long now=start;
+  intervalFunction *fn;
+
+  for(int i=0; i<8; ++i) {
+    fn=&(iFnList[i]);
+    if(now > fn->last + fn->interval) {
+      fn->f();
+      now=fn->last=millis();
+      if(now-start > INTERVAL_BUDGET) return;
+    }
+  }
 }
 
 //_______________________________________________________________________________________________ MAIN LOOP
@@ -1085,30 +1138,8 @@ void mainLoop() {
       }
       if (pressureSensor > breathThrVal) cursorBlinkTime = millis(); // keep display from updating with cursor blinking if breath is over thr
     }
-    // Is it time to send more CC data?
-    if (millis() - ccSendTime > CC_INTERVAL) {
-      // deal with Breath, Pitch Bend, Modulation, etc.
-      breath();
-      halfTime = !halfTime;
-      if (halfTime){
-        pitch_bend();
-        portamento_();
-      } else {
-        extraController();
-        statusLEDs();
-        doorKnobCheck();
-      }
-      ccSendTime = millis();
-    }
-    if (millis() - pixelUpdateTime > pixelUpdateInterval){
-      // even if we just alter a pixel, the whole display is redrawn (35ms of MPU lockup) and we can't do that all the time
-      // this is one of the big reasons the display is for setup use only
-      drawSensorPixels(); // live sensor monitoring for the setup screens
-      pixelUpdateTime = millis();
-    }
+    runIntervals();
     lastFingering=fingeredNote;
-    //do menu stuff
-    menu();
   }
 }
 
