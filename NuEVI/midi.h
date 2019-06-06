@@ -34,4 +34,7 @@ void dinMIDIsendSysex(const uint8_t data[], const uint8_t length);
 
 void sendWLPower(const uint8_t level);
 
+//This is a completely made up "European" SysEx manufacturer ID.
+static const unsigned char sysex_id[] = { 0x00, 0x3e, 0x5a };
+
 #endif

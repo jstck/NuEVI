@@ -2,7 +2,6 @@
 
 #include <Adafruit_MPR121.h>
 #include <SPI.h>
-#include <EEPROM.h>
 #include <Filters.h>  // for the breath signal LP filtering, https://github.com/edgar-bonet/Filters
 
 #include "globals.h"

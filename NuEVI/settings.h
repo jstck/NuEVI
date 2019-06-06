@@ -1,8 +1,5 @@
-
 #ifndef __SETTINGS_H
 #define __SETTINGS_H
-
-
 
 // EEPROM addresses for settings
 #define VERSION_ADDR 0
@@ -55,6 +52,53 @@
 #define VIB_SQUELCH_BITE_ADDR 94
 #define VIB_CONTROL_ADDR 96
 
+typedef struct config {
+	uint16_t version;
+	uint16_t breath_thr;
+	uint16_t breath_max;
+	uint16_t portam_thr;
+	uint16_t portam_max;
+	uint16_t pitchb_thr;
+	uint16_t pitchb_max;
+	uint16_t transpose;
+	uint16_t midi_channel;
+	uint16_t breath_cc;
+	uint16_t breath_at;
+	uint16_t velocity;
+	uint16_t portamento;
+	uint16_t pb_depth;
+	uint16_t extra_ct;
+	uint16_t vibrato;
+	uint16_t deglitch;
+	uint16_t extrac_thr;
+	uint16_t extrac_max;
+	uint16_t patch;
+	uint16_t octave;
+	uint16_t ctouch_thr;
+	uint16_t breathcurve;
+	uint16_t vel_smp_dl;
+	uint16_t vel_bias;
+	uint16_t pinky_setting;
+	uint16_t fastpatch1;
+	uint16_t fastpatch2;
+	uint16_t fastpatch3;
+	uint16_t fastpatch4;
+	uint16_t fastpatch5;
+	uint16_t fastpatch6;
+	uint16_t fastpatch7;
+	uint16_t dipsw_bits;
+	uint16_t parallel;
+	uint16_t rotations1;
+	uint16_t rotations2;
+	uint16_t rotations3;
+	uint16_t rotations4;
+	uint16_t priority;
+	uint16_t vib_sens;
+	uint16_t vib_retn;
+	uint16_t vib_squelch;
+	uint16_t vib_direction;
+}
+
 //"factory" values for settings
 #define VERSION 32
 #define BREATH_THR_FACTORY 1400
@@ -100,5 +144,15 @@
 #define VIB_SENS_BITE_FACTORY 6
 #define VIB_SQUELCH_BITE_FACTORY 12
 #define VIB_CONTROL_FACTORY 0
+
+
+void writeSetting(byte address, unsigned short value);
+unsigned short readSetting(byte address);
+
+void writeSettings(config* c);
+config* readSettings();
+
+void dumpSettings();
+
 
 #endif
