@@ -1,4 +1,4 @@
-#incude "settings.h"
+#include "settings.h"
 #include <EEPROM.h>
 
 
