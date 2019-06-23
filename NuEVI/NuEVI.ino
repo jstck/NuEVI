@@ -5,6 +5,8 @@
 #include <EEPROM.h>
 #include <Filters.h>  // for the breath signal LP filtering, https://github.com/edgar-bonet/Filters
 
+#include "ChRt.h"
+
 #include "globals.h"
 #include "hardware.h"
 #include "midi.h"
