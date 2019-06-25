@@ -374,29 +374,6 @@ void drawMenuCursor(byte itemNo, byte color){
 
 //***********************************************************
 
-// TODO: Move these to a settings.cpp maybe?
-void writeSetting(byte address, unsigned short value){
-  union {
-    byte v[2];
-    unsigned short val;
-  } data;
-  data.val = value;
-  EEPROM.update(address, data.v[0]);
-  EEPROM.update(address+1, data.v[1]);
-}
-
-unsigned short readSetting(byte address){
-  union {
-    byte v[2];
-    unsigned short val;
-  } data;
-  data.v[0] = EEPROM.read(address);
-  data.v[1] = EEPROM.read(address+1);
-  return data.val;
-}
-
-//***********************************************************
-
 static int readTrills() {
   readSwitches();
   return K5+2*K6+4*K7;

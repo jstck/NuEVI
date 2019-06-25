@@ -1,11 +1,13 @@
-#include "settings.h"
 #include <EEPROM.h>
+#include <Arduino.h>
 
+#include "settings.h"
+#include "midi.h"
 
 void writeSetting(uint8_t address, uint16_t value){
   union {
     byte v[2];
-    unsigned short val;
+    uint16_t val;
   } data;
   data.val = value;
   EEPROM.write(address, data.v[0]);
@@ -15,7 +17,7 @@ void writeSetting(uint8_t address, uint16_t value){
 uint16_t readSetting(uint8_t address){
   union {
     byte v[2];
-    unsigned short val;
+    uint16_t val;
   } data;
   data.v[0] = EEPROM.read(address);
   data.v[1] = EEPROM.read(address+1);
