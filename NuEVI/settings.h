@@ -97,7 +97,7 @@ typedef struct config {
 	uint16_t vib_retn;
 	uint16_t vib_squelch;
 	uint16_t vib_direction;
-}
+};
 
 //"factory" values for settings
 #define VERSION 32
@@ -146,8 +146,8 @@ typedef struct config {
 #define VIB_CONTROL_FACTORY 0
 
 
-void writeSetting(byte address, unsigned short value);
-unsigned short readSetting(byte address);
+void writeSetting(uint8_t address, uint16_t value);
+uint16_t readSetting(uint8_t address);
 
 void writeSettings(config* c);
 config* readSettings();
