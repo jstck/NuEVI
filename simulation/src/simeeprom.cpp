@@ -40,6 +40,7 @@ void  EEPROMClass::write( int idx, uint8_t val )
     }
 }
 
+
 void  EEPROMClass::update( int idx, uint8_t val )
 {
     write(idx, val);

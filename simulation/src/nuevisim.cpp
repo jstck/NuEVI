@@ -13,6 +13,7 @@
 #include "examples/imgui_impl_sdl.h"
 #include "examples/imgui_impl_opengl3.h"
 #include "EEPROM.h"
+#include "settings.h"
 
 #include <Arduino.h>
 
@@ -508,7 +509,7 @@ static void SimLoop(std::function<bool()> continue_predicate, std::function<void
     }
 }
 
-static int SimRun(std::string eepromFile, bool eepromWrite, bool factoryReset)
+static int SimRun(std::string eepromFile, bool eepromWrite, bool factoryReset, bool sysexDump)
 {
 	if( 0 != SimInit() ) { return 1; }
 
@@ -522,12 +523,19 @@ static int SimRun(std::string eepromFile, bool eepromWrite, bool factoryReset)
         digitalInputs[mPin] = 0;
         digitalInputs[ePin] = 0;
     }
+    else if(sysexDump) {
+        digitalInputs[uPin] = 0;
+        digitalInputs[dPin] = 0;
+    }
 
     setup();
 
     //Let it go, let it go, not resetting any more
     digitalInputs[mPin] = 1;
     digitalInputs[ePin] = 1;
+    digitalInputs[dPin] = 1;
+    digitalInputs[uPin] = 1;
+
 
     SimLoop( []() -> bool { return true; }, loop );
     SimQuit();
@@ -616,6 +624,7 @@ int main(int argc, const char** argv)
     args::ValueFlag<std::string> eepromFile(parser, "eeprom-write", "File to use for EEPROM data", {'e', "eeprom-file"});
     args::Flag eepromWrite(parser, "eeprom-write", "Write EEPROM changes to file", {'w', "eeprom-write"});
     args::Flag factoryReset(parser, "factory-reset", "Trigger factory reset", {'r', "factory-reset"});
+    args::Flag sysexDump(parser, "sysex-dump", "Trigger sysex config dump", {'d', "sysex-dump"});
 
     parser.ParseCLI(argc, argv);
 
@@ -628,5 +637,5 @@ int main(int argc, const char** argv)
         eepromFileName += "eeprom.bin";
     }
 
-    return SimRun(eepromFileName, args::get(eepromWrite), args::get(factoryReset));
+    return SimRun(eepromFileName, args::get(eepromWrite), args::get(factoryReset), args::get(sysexDump));
 }

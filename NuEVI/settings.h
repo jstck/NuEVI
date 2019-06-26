@@ -52,7 +52,7 @@
 #define VIB_SQUELCH_BITE_ADDR 94
 #define VIB_CONTROL_ADDR 96
 
-typedef struct config {
+struct nueviconfig {
 	uint16_t version;
 	uint16_t breath_thr;
 	uint16_t breath_max;
@@ -98,6 +98,8 @@ typedef struct config {
 	uint16_t vib_squelch;
 	uint16_t vib_direction;
 };
+
+typedef struct nueviconfig nueviconfig;
 
 //"factory" values for settings
 #define VERSION 32
@@ -149,10 +151,10 @@ typedef struct config {
 void writeSetting(uint8_t address, uint16_t value);
 uint16_t readSetting(uint8_t address);
 
-void writeSettings(config* c);
-config* readSettings();
+//void writeSettings(config* c);
+void readSettings(nueviconfig* c);
 
-void dumpSettings();
+void dumpSettings(nueviconfig* c);
 
 
 #endif

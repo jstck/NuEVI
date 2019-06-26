@@ -260,10 +260,14 @@ void setup() {
   digitalWrite(biteJumperGndPin, LOW);  //PBITE
 
   // if stored settings are not for current version, or Enter+Menu are pressed at startup, they are replaced by factory settings
+  bool factoryResetPressed = !digitalRead(ePin) && !digitalRead(mPin);
+
+  bool sysexDumpPressed = !factoryResetPressed && !digitalRead(uPin) && !digitalRead(dPin);
+
 
   uint16_t settingsVersion = readSetting(VERSION_ADDR);
 
-  if (((settingsVersion != VERSION) && (settingsVersion < 24)) || (!digitalRead(ePin) && !digitalRead(mPin)) || (settingsVersion == 0xffffu)) {
+  if (((settingsVersion != VERSION) && (settingsVersion < 24)) || factoryResetPressed || (settingsVersion == 0xffffu)) {
     writeSetting(VERSION_ADDR,VERSION);
     writeSetting(BREATH_THR_ADDR,BREATH_THR_FACTORY);
     writeSetting(BREATH_MAX_ADDR,BREATH_MAX_FACTORY);
@@ -281,7 +285,7 @@ void setup() {
     writeSetting(CTOUCH_THR_ADDR,CTOUCH_THR_FACTORY);
   }
 
-  if ((settingsVersion != VERSION) || (!digitalRead(ePin) && !digitalRead(mPin))) {
+  if ((settingsVersion != VERSION) || factoryResetPressed) {
     writeSetting(VERSION_ADDR,VERSION);
     
     writeSetting(TRANSP_ADDR,TRANSP_FACTORY);
@@ -415,7 +419,7 @@ void setup() {
   vibThrBite = vibZeroBite - vibSquelchBite;
   vibThrBiteLo = vibZeroBite + vibSquelchBite;
 
-  digitalWrite(statusLedPin, LOW);
+  digitalWrite(statusLedPin,LOW);
   delay(250);
   digitalWrite(statusLedPin,HIGH);
   delay(250);
@@ -436,6 +440,12 @@ void setup() {
   midiInitialize(MIDIchannel);
 
   //Serial.begin(9600); // debug
+
+  if(sysexDumpPressed) {
+    nueviconfig c;
+    readSettings(&c);
+    dumpSettings(&c);
+  }
 
   digitalWrite(statusLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready
 

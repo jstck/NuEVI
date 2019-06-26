@@ -18,24 +18,22 @@ struct EEPROMClass
     // EEPtr end()                          { return length(); } //Standards requires this to be the item after the last valid entry. The returned pointer is invalid.
     uint16_t length(); //                    { return E2END + 1; }
 
-    //Functionality to 'get' and 'put' objects to and from EEPROM.
-//     template< typename T > T &get( int idx, T &t ){
-//         EEPtr e = idx;
-//         uint8_t *ptr = (uint8_t*) &t;
-//         for( int count = sizeof(T) ; count ; --count, ++e )  *ptr++ = *e;
-//         return t;
-//     }
 
-//     template< typename T > const T &put( int idx, const T &t ){
-//         const uint8_t *ptr = (const uint8_t*) &t;
-// #ifdef __arm__
-//         eeprom_write_block(ptr, (void *)idx, sizeof(T));
-// #else
-//         EEPtr e = idx;
-//         for( int count = sizeof(T) ; count ; --count, ++e )  (*e).update( *ptr++ );
-// #endif
-//         return t;
-//     }
+ //   template< typename T > T &get( int idx, T &t );
+ //   template< typename T > const T &put( int idx, const T &t );
+
+//Keep these in header due to template stuff
+    template< typename T > T &get( int idx, T &t ){
+    fseek(storage, idx, SEEK_SET);
+    fread((void*)t, sizeof(T), 1, storage);
+    return t;
+}
+
+template< typename T > const T &put( int idx, const T &t ){
+    fseek(storage, idx, SEEK_SET);
+    fwrite((void*)t, sizeof(T), 1, storage);
+    return t;
+}
 
     //Make EEPROM persistent by storing to a file
     int16_t setStorage(const char* filename, bool write);
@@ -45,7 +43,6 @@ private:
     uint8_t someFakeEEPROM_memory[2048]; //Teensy 3.2 size
     FILE *storage;
     bool autoUpdate;
-
 
 };
 
