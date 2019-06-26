@@ -22,7 +22,7 @@
 // Forward declarations
 static void SimQuit(void);
 static int SimInit(void);
-static int SimRun(std::string eepromFile, bool eepromWrite, bool factoryReset);
+static int SimRun(std::string eepromFile, bool eepromWrite, bool factoryReset, bool sysexDump);
 static void SimLoop(std::function<bool()>, std::function<void()>);
 
 
