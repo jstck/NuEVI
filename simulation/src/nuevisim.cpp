@@ -40,6 +40,8 @@ static const int scale = 3;
 
 static SDL_Window *window;
 
+bool no_delay = false;
+
 void _reboot_Teensyduino_()
 {
     // TODO: reboot
@@ -82,6 +84,8 @@ uint8_t digitalRead(uint8_t pin) {
 
 void delay(unsigned int ms)
 {
+    if(no_delay) return;
+
     uint32_t endTick = SDL_GetTicks() + ms;
     auto checktime = [endTick]() -> bool { return endTick > SDL_GetTicks(); };
     SimLoop(checktime,NULL);
@@ -626,6 +630,7 @@ int main(int argc, const char** argv)
     args::Flag eepromWrite(parser, "eeprom-write", "Write EEPROM changes to file", {'w', "eeprom-write"});
     args::Flag factoryReset(parser, "factory-reset", "Trigger factory reset", {'r', "factory-reset"});
     args::Flag sysexDump(parser, "sysex-dump", "Trigger sysex config dump", {'d', "sysex-dump"});
+    args::Flag nodelay(parser, "nodelay", "Skip all delays when running", {'n', "nodelay"});
 
     parser.ParseCLI(argc, argv);
 
@@ -637,6 +642,8 @@ int main(int argc, const char** argv)
         eepromFileName = SDL_GetPrefPath("Vulk Data System", "NuEVI Simulator");
         eepromFileName += "eeprom.bin";
     }
+
+    no_delay = args::get(nodelay);
 
     return SimRun(eepromFileName, args::get(eepromWrite), args::get(factoryReset), args::get(sysexDump));
 }
