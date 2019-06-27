@@ -34,7 +34,13 @@ void dinMIDIsendSysex(const uint8_t data[], const uint8_t length);
 
 void sendWLPower(const uint8_t level);
 
+//Convert things between "regular data" and MIDI data (7 bits per byte usable)
+uint16_t midi16to14(uint16_t realdata);
+uint16_t midi14to16(uint16_t mididata);
+uint8_t midi8to7(uint8_t realdata);
+uint8_t midi7to8(uint8_t mididata);
+
 //This is a completely made up "European" SysEx manufacturer ID.
-static const unsigned char sysex_id[] = { 0x00, 0x3e, 0x5a };
+static const unsigned char sysex_id[] = { 0x00, 0x3e, 0x7f };
 
 #endif

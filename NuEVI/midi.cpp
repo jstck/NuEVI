@@ -170,12 +170,12 @@ uint16_t midi16to14(uint16_t realdata) {
 }
 
 uint16_t midi14to16(uint16_t mididata) {
-  return (mididata & 0x7F00) >> 1 | (middidata & 0x007F);
+  return (mididata & 0x7F00) >> 1 | (mididata & 0x007F);
 }
 
 uint8_t midi8to7(uint8_t realdata) {
   return realdata & 0x7F;
 }
 uint8_t midi7to8(uint8_t mididata) {
-  return mididdata & 0x7F;
+  return mididata & 0x7F;
 }

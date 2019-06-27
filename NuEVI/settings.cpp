@@ -43,12 +43,36 @@ void dumpSettings(const nueviconfig &c) {
   size_t config_size = sizeof(nueviconfig);
   size_t sysex_size = 3 + strlen(header) + 2 + config_size + 4;
 
+  //Positions (offsets) of parts of sysex buffer
+  int header_pos = 3;
+  int size_pos = header_pos + strlen(header);
+  int payload_pos = size_pos + 2;
+  int checksum_pos = payload_pos + config_size;
+
+
   sysex_data = (uint8_t*)malloc(sysex_size);
 
+  //SysEX manufacturer ID
   memcpy(sysex_data, sysex_id, 3);
-  memcpy(sysex_data+3, header, strlen(header));
-  memcpy(sysex_data+3+strlen(header), midi14bit(config_size), 2);
-  memcpy(sysex_data+5+strlen(header), &c, config_size);
+
+  //Header / "command"
+  memcpy(sysex_data+header_pos, header, strlen(header));
+
+  //Payload length
+  *(uint16_t*)(sysex_data+size_pos) = midi16to14(config_size);
+  
+  //Config data
+  uint16_t* config_buffer_start = (uint16_t*)(sysex_data+payload_pos);
+  uint16_t* config_data = (uint16_t*)(&c);
+  for(uint16_t idx=0; idx<config_size/2; idx++) {
+    config_buffer_start[idx] = midi16to14(config_data[idx]);
+  }
+
+  //memcpy(sysex_data+5+strlen(header), &c, config_size);
+
+  //Todo:  Checksum
+  uint32_t checksum = 0xDEADBEEF;
+  *(uint32_t*)(sysex_data+checksum_pos) = checksum & 0x7F7F7F7F; //Don't bother bitshifting, just mask bits off.
 
   usbMIDI.sendSysEx(sysex_size, sysex_data);
 
