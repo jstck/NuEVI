@@ -156,5 +156,7 @@ void writeSettings(nueviconfig &c);
 
 void dumpSettings(const nueviconfig &c);
 
+uint32_t crc32(uint8_t *message, size_t length);
+
 
 #endif

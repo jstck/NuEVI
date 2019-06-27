@@ -164,18 +164,25 @@ void sendWLPower(const uint8_t level) {
   dinMIDIsendSysex(buf, 6);
 }
 
-//Translate between "midi data" (only use 7 LSB per byte) and "real data"
+//Translate between "midi data" (only use 7 LSB per byte, big endian) and "teensy data" (little endian)
+//Only 14 LSB of int value are used (2MSB are discarded), so only works for unsigned data 0-16383
+
+//NOTE: This assumes code is running on a little-endian CPU, both for real device (Teensy) and simulator.
 uint16_t midi16to14(uint16_t realdata) {
-  return (realdata & 0x3F80) << 1 | (realdata & 0x007F);
+  return (realdata & 0x3F80) >>7 | (realdata & 0x007F) <<8;
 }
 
 uint16_t midi14to16(uint16_t mididata) {
-  return (mididata & 0x7F00) >> 1 | (mididata & 0x007F);
+  return (mididata & 0x7F00) >> 8 | (mididata & 0x007F) <<7 ;
 }
 
-uint8_t midi8to7(uint8_t realdata) {
-  return realdata & 0x7F;
-}
-uint8_t midi7to8(uint8_t mididata) {
-  return mididata & 0x7F;
+//This is a bit different. MSB of each byte is just discarded (instead of discarding MSB for whole value). Just used for CRC (easier to compare)
+uint32_t midi32to28(uint32_t realdata) {
+  uint8_t* p = (uint8_t*)&realdata;
+
+  uint32_t r=0;
+  for(int i=0; i<4; ++i) {
+    r = r<<8 | (p[i] & 0x7F);
+  }
+  return r;
 }

@@ -33,6 +33,19 @@ void writeSettings(nueviconfig &c){
   EEPROM.put(0, c);
 }
 
+
+uint32_t crc32(uint8_t *message, size_t length) {
+   size_t pos=0, crc=0xFFFFFFFF;
+
+   while (pos<length) {
+      crc ^= message[pos++]; //Get next byte and increment position
+      for (uint8_t j=0; j<8; ++j) { //Mask off 8 next bits
+         crc = (crc >> 1) ^ (0xEDB88320 &  -(crc & 1));
+      }
+   }
+   return ~crc;
+}
+
 void dumpSettings(const nueviconfig &c) {
   uint8_t *sysex_data;
 
@@ -70,9 +83,9 @@ void dumpSettings(const nueviconfig &c) {
 
   //memcpy(sysex_data+5+strlen(header), &c, config_size);
 
-  //Todo:  Checksum
-  uint32_t checksum = 0xDEADBEEF;
-  *(uint32_t*)(sysex_data+checksum_pos) = checksum & 0x7F7F7F7F; //Don't bother bitshifting, just mask bits off.
+  uint32_t checksum = crc32(sysex_data, checksum_pos);
+
+  *(uint32_t*)(sysex_data+checksum_pos) = midi32to28(checksum);
 
   usbMIDI.sendSysEx(sysex_size, sysex_data);
 
