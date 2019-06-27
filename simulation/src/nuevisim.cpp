@@ -19,6 +19,11 @@
 
 #include "args.hxx"
 
+//Check for byte order at compile-time
+#if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
+#warning "You are building for a platform that is not little endian byte order. Be aware that some MIDI functionality will break as a result."
+#endif
+
 // Forward declarations
 static void SimQuit(void);
 static int SimInit(void);
