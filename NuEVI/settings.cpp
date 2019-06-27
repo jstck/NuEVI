@@ -35,7 +35,8 @@ void writeSettings(nueviconfig &c){
 
 
 uint32_t crc32(uint8_t *message, size_t length) {
-   size_t pos=0, crc=0xFFFFFFFF;
+   size_t pos=0;
+   uint32_t crc=0xFFFFFFFF;
 
    while (pos<length) {
       crc ^= message[pos++]; //Get next byte and increment position
