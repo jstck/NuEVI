@@ -443,8 +443,8 @@ void setup() {
 
   if(sysexDumpPressed) {
     nueviconfig c;
-    readSettings(&c);
-    dumpSettings(&c);
+    readSettings(c);
+    dumpSettings(c);
   }
 
   digitalWrite(statusLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready

@@ -25,26 +25,32 @@ uint16_t readSetting(uint8_t address){
 }
 
 
-
-void readSettings(nueviconfig* c){
+void readSettings(nueviconfig &c){
   EEPROM.get(0, c);
 }
 
+void writeSettings(nueviconfig &c){
+  EEPROM.put(0, c);
+}
 
-void dumpSettings(const nueviconfig* c) {
+void dumpSettings(const nueviconfig &c) {
   uint8_t *sysex_data;
 
-const char *header = "NuEVIc00"; //NuEVI config dump 00
+  const char *header = "NuEVIc00"; //NuEVI config dump 00
 
-  //Build an array of all the config prefixed with manufacturer id + "nuevi config dump" signal
-  //Array is size of config + 11 bytes, 3 bytes id and 8 bytes header
-  sysex_data = (uint8_t*)malloc(3 + strlen(header) + sizeof(nueviconfig));
+  //Build an array of all the config prefixed with manufacturer id + "nuevi config dump"
+  //Array is size of 3+header+config
+  size_t config_size = sizeof(nueviconfig);
+  size_t sysex_size = 3 + strlen(header) + 2 + config_size + 4;
 
-  
+  sysex_data = (uint8_t*)malloc(sysex_size);
 
   memcpy(sysex_data, sysex_id, 3);
   memcpy(sysex_data+3, header, strlen(header));
-  memcpy(sysex_data+3+strlen(header), c, sizeof(nueviconfig));
+  memcpy(sysex_data+3+strlen(header), midi14bit(config_size), 2);
+  memcpy(sysex_data+5+strlen(header), &c, config_size);
 
-  usbMIDI.sendSysEx(sizeof(sysex_data), sysex_data);
+  usbMIDI.sendSysEx(sysex_size, sysex_data);
+
+  free(sysex_data);
 }

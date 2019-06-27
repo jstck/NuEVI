@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "settings.h"
 
 struct EEPROMClass
 {
@@ -19,21 +20,13 @@ struct EEPROMClass
     uint16_t length(); //                    { return E2END + 1; }
 
 
- //   template< typename T > T &get( int idx, T &t );
- //   template< typename T > const T &put( int idx, const T &t );
+//    template< typename T > T &get( int idx, T &t );
+//    template< typename T > const T &put( int idx, const T &t );
 
-//Keep these in header due to template stuff
-    template< typename T > T &get( int idx, T &t ){
-    fseek(storage, idx, SEEK_SET);
-    fread((void*)t, sizeof(T), 1, storage);
-    return t;
-}
+    //Hardcoded to only do get/put for nuevi config data.
+    nueviconfig* get( int idx, nueviconfig &t );
+    const nueviconfig* put( int idx, const nueviconfig &t );
 
-template< typename T > const T &put( int idx, const T &t ){
-    fseek(storage, idx, SEEK_SET);
-    fwrite((void*)t, sizeof(T), 1, storage);
-    return t;
-}
 
     //Make EEPROM persistent by storing to a file
     int16_t setStorage(const char* filename, bool write);

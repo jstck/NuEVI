@@ -151,10 +151,10 @@ typedef struct nueviconfig nueviconfig;
 void writeSetting(uint8_t address, uint16_t value);
 uint16_t readSetting(uint8_t address);
 
-//void writeSettings(config* c);
-void readSettings(nueviconfig* c);
+void readSettings(nueviconfig &c);
+void writeSettings(nueviconfig &c);
 
-void dumpSettings(nueviconfig* c);
+void dumpSettings(const nueviconfig &c);
 
 
 #endif

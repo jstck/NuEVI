@@ -41,6 +41,46 @@ void  EEPROMClass::write( int idx, uint8_t val )
 }
 
 
+nueviconfig* EEPROMClass::get( int idx, nueviconfig &t ){
+    printf("EEPROM::Get %d %d\n", idx, sizeof(nueviconfig));
+    memcpy(&t, someFakeEEPROM_memory+idx, sizeof(nueviconfig));
+    return &t;
+}
+
+const nueviconfig* EEPROMClass::put( int idx, const nueviconfig &t ){
+
+    memcpy(someFakeEEPROM_memory+idx, &t, sizeof(nueviconfig));
+    if(autoUpdate && storage) {
+        fseek(storage, idx, SEEK_SET);
+        fwrite((void*)&t, sizeof(nueviconfig), 1, storage);
+        fflush(storage);
+    }
+    return &t;
+}
+
+
+/*
+template< typename T > T &EEPROMClass::get( int idx, T &t ){
+    printf("EEPROM::Get %d %d\n", idx, sizeof(T));
+    memcpy(&t, someFakeEEPROM_memory+idx, sizeof(T));
+    //fseek(storage, idx, SEEK_SET);
+    //fread((void*)&t, sizeof(T), 1, storage);
+    return t;
+}
+
+template< typename T > const T &EEPROMClass::put( int idx, const T &t ){
+
+    memcpy(someFakeEEPROM_memory+idx, &t, sizeof(T));
+    if(autoUpdate && storage) {
+        fseek(storage, idx, SEEK_SET);
+        fwrite((void*)&t, sizeof(T), 1, storage);
+        fflush(storage);
+    }
+    return t;
+}
+
+*/
+
 void  EEPROMClass::update( int idx, uint8_t val )
 {
     write(idx, val);

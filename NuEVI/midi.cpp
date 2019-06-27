@@ -162,5 +162,20 @@ void sendWLPower(const uint8_t level) {
 
   buf[5] = level;
   dinMIDIsendSysex(buf, 6);
+}
 
+//Translate between "midi data" (only use 7 LSB per byte) and "real data"
+uint16_t midi16to14(uint16_t realdata) {
+  return (realdata & 0x3F80) << 1 | (realdata & 0x007F);
+}
+
+uint16_t midi14to16(uint16_t mididata) {
+  return (mididata & 0x7F00) >> 1 | (middidata & 0x007F);
+}
+
+uint8_t midi8to7(uint8_t realdata) {
+  return realdata & 0x7F;
+}
+uint8_t midi7to8(uint8_t mididata) {
+  return mididdata & 0x7F;
 }

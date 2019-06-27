@@ -49,9 +49,14 @@ void SimUsbMidi::sendPitchBend(int value, uint8_t channel, uint8_t __unused cabl
 	printf( "[usbMIDI::pitchBend] pb %05d ch %02d\n", value, channel);
 }
 
-void SimUsbMidi::sendSysEx(uint16_t length, const uint8_t __unused *data, bool __unused hasTerm, uint8_t __unused cable)
+void SimUsbMidi::sendSysEx(uint16_t length, const uint8_t *data, bool __unused hasTerm, uint8_t __unused cable)
 {
 	printf( "[usbMIDI::sysEx] len %d\n", length);
+	for(int i=0; i<length; ++i) {
+		uint8_t c = data[i];
+		printf("%02X ", c);
+	}
+	printf("\n");
 }
 
 bool SimUsbMidi::read(uint8_t __unused channel) {
