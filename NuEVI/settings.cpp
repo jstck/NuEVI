@@ -86,6 +86,9 @@ void dumpSettings(const nueviconfig &c) {
 
   uint32_t checksum = crc32(sysex_data, checksum_pos);
 
+  printf("CRC len: %d\n", checksum_pos);
+  printf("CRC32: %X | %u\n", checksum, checksum);
+
   *(uint32_t*)(sysex_data+checksum_pos) = midi32to28(checksum);
 
   usbMIDI.sendSysEx(sysex_size, sysex_data);
