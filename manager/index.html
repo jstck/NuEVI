@@ -1,9 +1,21 @@
 <html>
 <head>
+<link rel="stylesheet" href="style.css" />
 <script src="crc32.js"></script>
+<script src="FileSaver.js"></script>
 <script>
 
-const factory_eeprom_data = [0x00, 0x3E, 0x7F, 0x4E, 0x75, 0x45, 0x56, 0x49, 0x63, 0x30, 0x30, 0x00, 0x58, 0x00, 0x1F, 0x0A, 0x78, 0x1F, 0x20, 0x14, 0x28, 0x19, 0x64, 0x0A, 0x78, 0x11, 0x7C, 0x00, 0x0C, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02, 0x00, 0x04, 0x00, 0x14, 0x09, 0x30, 0x12, 0x60, 0x00, 0x01, 0x00, 0x03, 0x00, 0x7D, 0x00, 0x04, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x00, 0x13, 0x00, 0x0E, 0x00, 0x11, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x0F, 0x00, 0x00, 0x5B, 0x0A, 0x56, 0x1D];
+const factory_eeprom_data = [
+0x00, 0x3E, 0x7F,
+0x4E, 0x75, 0x45, 0x56, 0x49, 0x63, 0x30, 0x30,
+0x00, 0x58,
+0x00, 0x1F, 0x0A, 0x78, 0x1F, 0x20, 0x14, 0x28, 0x19, 0x64, 0x0A, 0x78, 0x11, 0x7C, 0x00, 0x0C,
+0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02, 0x00, 0x04,
+0x00, 0x14, 0x09, 0x30, 0x12, 0x60, 0x00, 0x01, 0x00, 0x03, 0x00, 0x7D, 0x00, 0x04, 0x00, 0x0F,
+0x00, 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x00, 0x13, 0x00, 0x0E, 0x00, 0x11, 0x00, 0x0A, 0x00, 0x00,
+0x00, 0x06, 0x00, 0x02, 0x00, 0x0F, 0x00, 0x00,
+0x5B, 0x0A, 0x56, 0x1D];
 
 
 const nuevi_vendor = [ 0x00, 0x3e, 0x7f ];
@@ -63,7 +75,7 @@ function midi14to16(mididata) {
 }
 
 function readSetting(mididata, pos) {
-	return midi14to16(mididata.slice(pos, 2));
+	return midi14to16(mididata.slice(pos, pos+2));
 }
 
 function equalArray(a1, a2) {
@@ -79,9 +91,6 @@ function equalArray(a1, a2) {
 
 function readConfig(mididata) {
   var nueviConfig = new Object();
-
-  nueviConfig.fastPatch = new Array();
-  nueviConfig.rotations = new Array();
 
   nueviConfig.version      = readSetting(mididata, VERSION_ADDR);
   nueviConfig.breathThrVal = readSetting(mididata, BREATH_THR_ADDR);
@@ -109,6 +118,8 @@ function readConfig(mididata) {
   nueviConfig.velSmpDl     = readSetting(mididata, VEL_SMP_DL_ADDR);
   nueviConfig.velBias      = readSetting(mididata, VEL_BIAS_ADDR);
   nueviConfig.pinkySetting = readSetting(mididata, PINKY_KEY_ADDR);
+
+  nueviConfig.fastPatch = new Array();
   nueviConfig.fastPatch[0] = readSetting(mididata, FP1_ADDR);
   nueviConfig.fastPatch[1] = readSetting(mididata, FP2_ADDR);
   nueviConfig.fastPatch[2] = readSetting(mididata, FP3_ADDR);
@@ -118,6 +129,8 @@ function readConfig(mididata) {
   nueviConfig.fastPatch[6] = readSetting(mididata, FP7_ADDR);
   nueviConfig.dipSwBits    = readSetting(mididata, DIPSW_BITS_ADDR);
   nueviConfig.parallel     = readSetting(mididata, PARAL_ADDR);
+
+  nueviConfig.rotations = new Array();
   nueviConfig.rotations[0] = readSetting(mididata, ROTN1_ADDR);
   nueviConfig.rotations[1] = readSetting(mididata, ROTN2_ADDR);
   nueviConfig.rotations[2] = readSetting(mididata, ROTN3_ADDR);
@@ -131,36 +144,46 @@ function readConfig(mididata) {
   return nueviConfig;
 }
 
-parseSysex(factory_eeprom_data);
+function doStuff() {
+	parseSysex(factory_eeprom_data);
+}
+
 
 function parseSysex(data) {
 	var vendor = data.slice(0,3);
-	var header = data.slice(3,11).map(x => String.fromCharCode(x)).join("");
-	var payload_length = midi14to16(data.slice(11,13));
-	var payload = data.slice(13, -4);
-	var checksum = data.slice(-4);
-	var checksum_data = data.slice(0, -4);
 
 	if(!equalArray(vendor, nuevi_vendor)) {
 		console.log("Unknown vendor: " + vendor);
 		return;
 	}
 
+
+	var header = data.slice(3,11).map(x => String.fromCharCode(x)).join("");
+
 	if(header != "NuEVIc00") {
 		console.log("Unknown header: '" + header + "'");
 		return;
 	}
 
-	if(payload_length != payload.length) {
-		console.log("Payload length should be " + payload_length + " bytes, but only " + payload.length + " bytes found.");
+	var payload_length = midi14to16(data.slice(11,13));
+
+	if(payload_length != 88) {
+		console.log("Payload expected to be 88 bytes, was " + payload_length + " bytes.");
 		return;
 	}
 
-	if(payload.length != 88) {
-		console.log("Payload expected to be 88 bytes, was " + payload.length + " bytes.");
-		return;
+	if(data.length < 13+payload_length) {
+		console.log("Data too short to fit payload, only " + data.length + " bytes found.");
+		return;	
 	}
 
+	var payload = data.slice(13, 13+payload_length);
+	var checksum = data.slice(-4);
+	var checksum_data = data.slice(0, -4);
+
+
+
+	
 	crc = CRC32.buf(checksum_data);
 
 	//Mask off msb of each byte to match 7-bit midi data format
@@ -170,12 +193,17 @@ function parseSysex(data) {
 	}
 
 	nc = readConfig(payload);
-	console.log(nc);
+	//console.log(nc);
 
 
-	if(nueviConfig.version != 31) {
-		console.log("Unknown NuEVI config version: '" + nueviConfig.version + "'.");
+	if(nc.version != 31) {
+		console.log("Unknown NuEVI config version: '" + nc.version + "'.");
 	}
+
+	var ta = document.getElementById("jsondata");
+	ta.value = JSON.stringify(nc, null, 2);
+
+	return nc;
 
 }
 
@@ -272,10 +300,27 @@ function getMIDIMessage(midiMessage) {
 function onMIDIFailure() {
     console.log('Could not access your MIDI devices.');
 }
+
+function saveJson() {
+	var blob = new Blob([document.getElementById("jsondata").value], {type: "text/json;charset=utf-8"});
+	saveAs(blob, "NuEVI config.json");
+}
 </script>
 </head>
-<body>
-Hej.
-<select size="1" id="mididevice" />
+<body onLoad="doStuff();">
+NuEVI configuration manager.
+
+<select size="1" id="mididevice"></select>
+
+<div class="configTable" style="width: 500px;" >
+  <div class="tableBody">
+    <div class="tableRow">
+      <div class="tableCell">&nbsp;</div>
+      <div class="tableCell">&nbsp;</div>
+    </div>
+  </div>
+</div>
+<textarea id="jsondata" name="stuff">{}</textarea>
+<input type="button" value="Save file" onClick="saveJson()" />
 </body>
 </html>
