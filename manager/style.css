@@ -1,0 +1,19 @@
+div.configTable {
+  border: 1px solid #7F7F7F;
+  background-color: #F0F0F0;
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  display: table;
+}
+.tableCell {
+  border: 1px solid #E0E0E0;
+  padding: 3px 2px;
+
+  display: table-cell;
+  font-size: 13px;
+}
+
+.tableRow { display: table-row; }
+
+.tableBody { display: table-row-group;}
