@@ -14,6 +14,17 @@ div.configTable {
   font-size: 13px;
 }
 
-.tableRow { display: table-row; }
+.tableRow {
+  display: table-row;
+  width: 100%;
+}
+
+.tableRow fullRow {
+  display: block;
+  border: 1px solid #E0E0E0;
+  padding: 3px 2px;
+  font-size: 15px;
+
+}
 
 .tableBody { display: table-row-group;}
