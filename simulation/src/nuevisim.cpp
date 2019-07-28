@@ -1,5 +1,6 @@
 #include <functional>
 #include <string>
+#include <iostream>
 
 #include <SDL2/SDL.h>
 
@@ -630,14 +631,37 @@ int main(int argc, const char** argv)
     args::ArgumentParser parser("This is a test program.", "This goes after the options.");
 
 
-    args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+    //args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
     args::ValueFlag<std::string> eepromFile(parser, "eeprom-write", "File to use for EEPROM data", {'e', "eeprom-file"});
     args::Flag eepromWrite(parser, "eeprom-write", "Write EEPROM changes to file", {'w', "eeprom-write"});
     args::Flag factoryReset(parser, "factory-reset", "Trigger factory reset", {'r', "factory-reset"});
     args::Flag sysexDump(parser, "sysex-dump", "Trigger sysex config dump", {'d', "sysex-dump"});
     args::Flag nodelay(parser, "nodelay", "Skip all delays when running", {'n', "nodelay"});
 
-    parser.ParseCLI(argc, argv);
+    try {
+        parser.ParseCLI(argc, argv);
+    }
+    catch (args::Help h)
+    {
+        std::cout << parser;
+        return 0;
+    }
+    catch (args::ParseError e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    }
+    catch (args::ValidationError e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    }
+    catch(...)
+    {
+        std::cerr << "BLAHONGA";
+    }
 
     std::string eepromFileName = args::get(eepromFile);
 
