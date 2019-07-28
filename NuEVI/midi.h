@@ -40,6 +40,6 @@ uint16_t midi14to16(uint16_t mididata);
 uint32_t midi32to28(uint32_t realdata);
 
 //This is a completely made up "European" SysEx manufacturer ID.
-static const unsigned char sysex_id[] = { 0x00, 0x3e, 0x7f };
+static const char sysex_id[] = { 0x00, 0x3e, 0x7f };
 
 #endif

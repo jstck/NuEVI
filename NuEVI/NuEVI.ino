@@ -442,9 +442,7 @@ void setup() {
   //Serial.begin(9600); // debug
 
   if(sysexDumpPressed) {
-    nueviconfig c;
-    readSettings(c);
-    dumpSettings(c);
+    configLoop();
   }
 
   digitalWrite(statusLedPin,HIGH); // Switch on the onboard LED to indicate power on/ready

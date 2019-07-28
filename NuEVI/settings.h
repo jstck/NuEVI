@@ -154,7 +154,9 @@ uint16_t readSetting(uint8_t address);
 void readSettings(nueviconfig &c);
 void writeSettings(nueviconfig &c);
 
-void dumpSettings(const nueviconfig &c);
+//void dumpSettings(const nueviconfig &c);
+void dumpSettings();
+void configLoop();
 
 uint32_t crc32(uint8_t *message, size_t length);
 

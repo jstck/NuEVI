@@ -63,3 +63,7 @@ bool SimUsbMidi::read(uint8_t __unused channel) {
 	return false;
 }
 
+void SimUsbMidi::setHandleSystemExclusive(void (*fptr) (uint8_t *array, uint8_t size)) {
+
+}
+
